@@ -43,18 +43,35 @@ body {
   border-radius: 10px;
 }
 
+/* Apple-Style Glassmorphism Utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ios-divider {
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+}
+
+.ios-shadow {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
 .data-value {
   font-family: var(--font-mono);
-  letter-spacing: -0.04em;
-  font-weight: 500;
+  letter-spacing: -0.06em;
+  font-weight: 600;
 }
 
 .meta-label {

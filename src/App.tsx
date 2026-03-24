@@ -669,73 +669,82 @@ const AddAccount = ({ onBack, onSave }: { onBack: () => void, onSave: (account: 
   };
 
   return (
-    <motion.div 
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '100%' }}
-      className="fixed inset-0 bg-white z-[60] flex flex-col shadow-2xl"
-    >
-      <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink bg-white">
-        <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50">Back</button>
-        <h2 className="text-sm font-bold uppercase tracking-widest">Connect Wealth</h2>
-        <div className="w-10" />
-      </header>
+    <>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onBack}
+        className="fixed inset-0 bg-black/5 backdrop-blur-md z-[55]"
+      />
+      <motion.div 
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        className="fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[400px] glass z-[60] flex flex-col shadow-2xl overflow-hidden"
+      >
+        <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
+          <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Back</button>
+          <h2 className="text-sm font-bold uppercase tracking-widest">Connect Wealth</h2>
+          <div className="w-10" />
+        </header>
 
-      <div className="flex-1 px-8 pt-12 space-y-10 overflow-y-auto">
-        <div className="space-y-8">
-          <div className="space-y-3">
-            <p className="meta-label">Identity</p>
-            <input 
-              autoFocus
-              value={formData.name}
-              onChange={e => setFormData({...formData, name: e.target.value})}
-              placeholder="e.g. Chase Priority"
-              className="w-full glass p-6 rounded-3xl text-xl font-bold focus:outline-none focus:ring-4 focus:ring-purple-600/5 transition-all placeholder:opacity-20"
-            />
-          </div>
-
-          <div className="space-y-3">
-            <p className="meta-label">Current Balance</p>
-            <div className="relative">
-              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold opacity-30">$</span>
+        <div className="flex-1 px-8 pt-12 space-y-10 overflow-y-auto no-scrollbar">
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <p className="meta-label">Identity</p>
               <input 
-                type="number"
-                value={formData.balance}
-                onChange={e => setFormData({...formData, balance: e.target.value})}
-                placeholder="0,000.00"
-                className="w-full glass p-6 pl-12 rounded-3xl text-4xl font-bold data-value focus:outline-none focus:ring-4 focus:ring-purple-600/5 transition-all placeholder:opacity-20"
+                autoFocus
+                value={formData.name}
+                onChange={e => setFormData({...formData, name: e.target.value})}
+                placeholder="e.g. Chase Priority"
+                className="w-full glass p-6 rounded-3xl text-xl font-bold focus:outline-none focus:ring-4 focus:ring-purple-600/5 transition-all placeholder:opacity-20"
               />
             </div>
-          </div>
 
-          <div className="space-y-3">
-            <p className="meta-label">Allocation Class</p>
-            <div className="grid grid-cols-2 gap-4">
-              {(['checking', 'savings', 'investment', 'crypto'] as const).map(type => (
-                <button
-                  key={type}
-                  onClick={() => setFormData({...formData, type})}
-                  className={cn(
-                    "p-5 rounded-2xl border-2 text-[10px] font-bold uppercase tracking-widest transition-all",
-                    formData.type === type ? "bg-purple-600 text-white border-purple-600 shadow-xl shadow-purple-600/20" : "glass border-transparent opacity-40"
-                  )}
-                >
-                  {type}
-                </button>
-              ))}
+            <div className="space-y-3">
+              <p className="meta-label">Current Balance</p>
+              <div className="relative">
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold opacity-30">$</span>
+                <input 
+                  type="number"
+                  value={formData.balance}
+                  onChange={e => setFormData({...formData, balance: e.target.value})}
+                  placeholder="0,000.00"
+                  className="w-full glass p-6 pl-12 rounded-3xl text-4xl font-bold data-value focus:outline-none focus:ring-4 focus:ring-purple-600/5 transition-all placeholder:opacity-20"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <p className="meta-label">Allocation Class</p>
+              <div className="grid grid-cols-2 gap-4">
+                {(['checking', 'savings', 'investment', 'crypto'] as const).map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setFormData({...formData, type})}
+                    className={cn(
+                      "p-5 rounded-2xl border-2 text-[10px] font-bold uppercase tracking-widest transition-all",
+                      formData.type === type ? "bg-purple-600 text-white border-purple-600 shadow-xl shadow-purple-600/20" : "glass border-transparent opacity-40"
+                    )}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <button 
-          onClick={handleSave}
-          disabled={!formData.name || !formData.balance}
-          className="w-full py-6 bg-purple-600 text-white rounded-[2rem] font-bold uppercase tracking-widest shadow-2xl shadow-purple-600/40 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all"
-        >
-          Confirm Attachment
-        </button>
-      </div>
-    </motion.div>
+          <button 
+            onClick={handleSave}
+            disabled={!formData.name || !formData.balance}
+            className="w-full py-6 bg-purple-600 text-white rounded-[2rem] font-bold uppercase tracking-widest shadow-2xl shadow-purple-600/40 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all"
+          >
+            Confirm Attachment
+          </button>
+        </div>
+      </motion.div>
+    </>
   );
 };
 
@@ -764,76 +773,85 @@ const AddTransaction = ({ onBack, onSave }: { onBack: () => void, onSave: (tx: T
   };
 
   return (
-    <motion.div 
-      initial={{ y: '100%' }}
-      animate={{ y: 0 }}
-      exit={{ y: '100%' }}
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed inset-0 bg-white z-[70] flex flex-col shadow-2xl"
-    >
-      <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink bg-white">
-        <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50">Cancel</button>
-        <h2 className="text-sm font-bold uppercase tracking-widest">Entry</h2>
-        <button onClick={handleSave} className="text-[10px] font-bold uppercase tracking-widest text-purple-600 font-black">Post</button>
-      </header>
+    <>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onBack}
+        className="fixed inset-0 bg-black/10 backdrop-blur-xl z-[65]"
+      />
+      <motion.div 
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed inset-0 sm:inset-y-12 sm:mx-auto sm:max-w-md sm:rounded-[3rem] glass z-[70] flex flex-col shadow-2xl overflow-hidden"
+      >
+        <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
+          <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Cancel</button>
+          <h2 className="text-sm font-bold uppercase tracking-widest">Entry</h2>
+          <button onClick={handleSave} className="text-[10px] font-bold uppercase tracking-widest text-purple-600 font-black">Post</button>
+        </header>
 
-      <div className="flex-1 flex flex-col px-8 pt-8 space-y-8 overflow-y-auto no-scrollbar pb-32">
-        <div className="text-center space-y-2">
-          <p className="meta-label opacity-40">Expense Value</p>
-          <div className="flex items-center justify-center gap-1">
-            <span className="text-3xl font-bold text-ink/30">$</span>
-            <p className="text-7xl font-bold data-value tracking-tighter text-primary">{amount}</p>
+        <div className="flex-1 flex flex-col px-8 pt-8 space-y-8 overflow-y-auto no-scrollbar pb-32">
+          <div className="text-center space-y-2">
+            <p className="meta-label opacity-40">Expense Value</p>
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-3xl font-bold text-ink/30">$</span>
+              <p className="text-7xl font-bold data-value tracking-tighter text-primary">{amount}</p>
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-3">
-          <p className="meta-label">Merchant / Description</p>
-          <input 
-            value={merchant}
-            onChange={e => setMerchant(e.target.value)}
-            placeholder="Search or type name..."
-            className="w-full glass p-5 rounded-2xl text-lg font-bold focus:outline-none focus:ring-2 focus:ring-purple-600/10 transition-all placeholder:opacity-20"
-          />
-        </div>
+          <div className="space-y-3">
+            <p className="meta-label">Merchant / Description</p>
+            <input 
+              value={merchant}
+              onChange={e => setMerchant(e.target.value)}
+              placeholder="Search or type name..."
+              className="w-full glass p-5 rounded-2xl text-lg font-bold focus:outline-none focus:ring-2 focus:ring-purple-600/10 transition-all placeholder:opacity-20"
+            />
+          </div>
 
-        <div className="space-y-4">
-          <p className="meta-label">Classification</p>
-          <div className="grid grid-cols-4 gap-3">
-            {(['Dining', 'Retail', 'Travel', 'Home', 'Groceries', 'Transport'] as Category[]).map((cat) => (
+          <div className="space-y-4">
+            <p className="meta-label">Classification</p>
+            <div className="grid grid-cols-4 gap-3">
+              {(['Dining', 'Retail', 'Travel', 'Home', 'Groceries', 'Transport'] as Category[]).map((cat) => (
+                <button 
+                  key={cat} 
+                  onClick={() => setCategory(cat)}
+                  className={cn(
+                    "glass py-4 rounded-xl flex flex-col items-center gap-2 transition-all border-2",
+                    category === cat ? "border-purple-600/40 bg-white" : "border-transparent opacity-50"
+                  )}
+                >
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    category === cat ? "bg-purple-600" : "bg-black/10"
+                  )} />
+                  <span className="text-[8px] font-black uppercase tracking-widest text-ink">{cat}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
               <button 
-                key={cat} 
-                onClick={() => setCategory(cat)}
-                className={cn(
-                  "glass py-4 rounded-xl flex flex-col items-center gap-2 transition-all border-2",
-                  category === cat ? "border-purple-600/40 bg-white" : "border-transparent opacity-50"
-                )}
+                key={key}
+                onClick={() => {
+                  if (key === 'DEL') setAmount(amount.length > 1 ? amount.slice(0, -1) : '0');
+                  else handleKeypad(key.toString());
+                }}
+                className="h-16 glass rounded-2xl text-2xl font-bold data-value flex items-center justify-center active:bg-purple-600 text-ink active:text-white transition-all"
               >
-                <div className={cn(
-                  "w-1.5 h-1.5 rounded-full",
-                  category === cat ? "bg-purple-600" : "bg-black/10"
-                )} />
-                <span className="text-[8px] font-black uppercase tracking-widest text-ink">{cat}</span>
+                {key}
               </button>
             ))}
           </div>
         </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
-            <button 
-              key={key}
-              onClick={() => {
-                if (key === 'DEL') setAmount(amount.length > 1 ? amount.slice(0, -1) : '0');
-                else handleKeypad(key.toString());
-              }}
-              className="h-16 glass rounded-2xl text-2xl font-bold data-value flex items-center justify-center active:bg-purple-600 text-ink active:text-white transition-all"
-            >
-              {key}
-            </button>
-          ))}
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 
@@ -918,85 +936,94 @@ const QuickAddDrawer = ({ categories, onAdd }: { categories: Category[], onAdd: 
 
 const UserManagement = ({ onBack, onExport }: { onBack: () => void, onExport: () => void }) => {
   return (
-    <motion.div 
-      initial={{ x: '-100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '-100%' }}
-      className="fixed inset-0 bg-white z-[100] flex flex-col shadow-2xl"
-    >
-      <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink bg-white border-b border-black/5">
-        <button onClick={onBack} className="text-[10px] font-extrabold uppercase tracking-widest opacity-50">Dismiss</button>
-        <h2 className="text-sm font-black uppercase tracking-widest">Settings</h2>
-        <div className="w-10" />
-      </header>
+    <>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onBack}
+        className="fixed inset-0 bg-black/5 backdrop-blur-md z-[95]"
+      />
+      <motion.div 
+        initial={{ x: '-100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '-100%' }}
+        className="fixed inset-0 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-[400px] glass z-[100] flex flex-col shadow-2xl overflow-hidden"
+      >
+        <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
+          <button onClick={onBack} className="text-[10px] font-extrabold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Dismiss</button>
+          <h2 className="text-sm font-black uppercase tracking-widest">Settings</h2>
+          <div className="w-10" />
+        </header>
 
-      <div className="px-8 pt-12 space-y-10 flex-1 overflow-y-auto no-scrollbar">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-24 h-24 rounded-[2rem] bg-purple-600/10 flex items-center justify-center border-2 border-purple-600/20 shadow-xl shadow-purple-600/5">
-            <User size={48} className="text-purple-600" />
-          </div>
-          <div className="text-center">
-            <h3 className="text-2xl font-black text-ink">Asher Atelier</h3>
-            <p className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mt-1">Founding Member</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <p className="meta-label">Core Functions</p>
-          <div className="grid grid-cols-1 gap-3">
-            <button 
-              onClick={onExport}
-              className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600/5 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
-                  <FileDown size={22} />
-                </div>
-                <div className="text-left">
-                  <span className="text-sm font-bold text-ink block">Export Warehouse</span>
-                  <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">CSV / JSON Engine</span>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />
-            </button>
-            
-            <button className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-black/5 text-ink/40 flex items-center justify-center">
-                  <Settings size={22} />
-                </div>
-                <div className="text-left">
-                  <span className="text-sm font-bold text-ink block">Preferences</span>
-                  <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">System Config</span>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-ink/20" />
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-[2.5rem] text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
-              <Zap size={18} />
+        <div className="px-8 pt-12 space-y-10 flex-1 overflow-y-auto no-scrollbar">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-24 h-24 rounded-[2rem] bg-purple-600/10 flex items-center justify-center border-2 border-purple-600/20 shadow-xl shadow-purple-600/5">
+              <User size={48} className="text-purple-600" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">PennyTrack Pro</span>
+            <div className="text-center">
+              <h3 className="text-2xl font-black text-ink">Asher Atelier</h3>
+              <p className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mt-1">Founding Member</p>
+            </div>
           </div>
-          <div>
-            <p className="text-lg font-bold">Priority Support</p>
-            <p className="text-[10px] opacity-60 leading-relaxed font-medium">As a Pro member, your queries are answered within 60 minutes.</p>
+
+          <div className="space-y-4">
+            <p className="meta-label">Core Functions</p>
+            <div className="grid grid-cols-1 gap-3">
+              <button 
+                onClick={onExport}
+                className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-600/5 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
+                    <FileDown size={22} />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-sm font-bold text-ink block">Export Warehouse</span>
+                    <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">CSV / JSON Engine</span>
+                  </div>
+                </div>
+                <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />
+              </button>
+              
+              <button className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-black/5 text-ink/40 flex items-center justify-center">
+                    <Settings size={22} />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-sm font-bold text-ink block">Preferences</span>
+                    <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">System Config</span>
+                  </div>
+                </div>
+                <ChevronRight size={18} className="text-ink/20" />
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-[2.5rem] text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                <Zap size={18} />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">PennyTrack Pro</span>
+            </div>
+            <div>
+              <p className="text-lg font-bold">Priority Support</p>
+              <p className="text-[10px] opacity-60 leading-relaxed font-medium">As a Pro member, your queries are answered within 60 minutes.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="p-8">
-        <button className="w-full py-6 glass text-rose-500 rounded-[2rem] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs">
-          <LogOut size={20} />
-          Safe Logout
-        </button>
-      </div>
-    </motion.div>
+        <div className="p-8">
+          <button className="w-full py-6 glass text-rose-500 rounded-[2rem] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs">
+            <LogOut size={20} />
+            Safe Logout
+          </button>
+        </div>
+      </motion.div>
+    </>
   );
 };
 
@@ -1118,7 +1145,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* Bottom Navigation */}
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-black/5 px-8 pb-10 pt-4 flex justify-between items-center z-[50]">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-black/5 px-4 pb-10 pt-4 flex justify-around items-center z-[50]">
           {[
             { id: 'dashboard', icon: LayoutDashboard, label: 'Vault' },
             { id: 'history', icon: HistoryIcon, label: 'Logs' },
@@ -1130,8 +1157,8 @@ export default function App() {
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={cn(
-                "flex flex-col items-center gap-1.5 transition-all duration-300",
-                tab.isSpecial ? "bg-purple-600 p-4 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white" : "opacity-30",
+                "flex flex-col items-center gap-1.5 transition-all duration-300 w-16",
+                tab.isSpecial ? "bg-purple-600 p-4 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white flex-shrink-0" : "opacity-30",
                 activeTab === tab.id && !tab.isSpecial && "opacity-100 text-purple-600",
                 activeTab === tab.id && tab.isSpecial && "scale-110 rotate-90"
               )}
