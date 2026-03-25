@@ -43,7 +43,8 @@ import {
   Link2,
   Target,
   SlidersHorizontal,
-  Activity
+  Activity,
+  Loader2
 } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, 
@@ -55,11 +56,15 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Transaction, Budget, Account, Category, Suggestion, Format } from './types';
+import { supabase } from './lib/supabase';
+import { AuthScreen } from './components/AuthScreen';
+import { Session } from '@supabase/supabase-js';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
 
 // Helpers
 const formatDate = (dateStr: string) => {
@@ -1057,7 +1062,10 @@ const UserManagement = ({ onBack, onExport }: { onBack: () => void, onExport: ()
         </div>
 
         <div className="p-8">
-          <button className="w-full py-6 glass text-rose-500 rounded-[2rem] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs">
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="w-full py-6 glass text-rose-500 rounded-[2rem] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs"
+          >
             <LogOut size={20} />
             Safe Logout
           </button>
@@ -1068,6 +1076,7 @@ const UserManagement = ({ onBack, onExport }: { onBack: () => void, onExport: ()
 };
 
 export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAdd, setShowAdd] = useState(false);
   const [showAddAccount, setShowAddAccount] = useState(false);
@@ -1075,8 +1084,51 @@ export default function App() {
   const [showExport, setShowExport] = useState(false);
   const [activeQuickCat, setActiveQuickCat] = useState<Category | null>(null);
 
-  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
-  const [accounts, setAccounts] = useState<Account[]>(INITIAL_ACCOUNTS);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Auth Listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        fetchData();
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        fetchData();
+      } else {
+        setTransactions([]);
+        setAccounts([]);
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [txRes, accRes] = await Promise.all([
+        supabase.from('transactions').select('*').order('date', { ascending: false }),
+        supabase.from('accounts').select('*').order('created_at', { ascending: true })
+      ]);
+
+      if (txRes.data) setTransactions(txRes.data);
+      if (accRes.data) setAccounts(accRes.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleTabChange = (tab: string) => {
     if (tab === 'add') {
@@ -1087,15 +1139,46 @@ export default function App() {
     }
   };
 
-  const handleSaveTransaction = (tx: Transaction) => {
-    setTransactions([tx, ...transactions]);
+  const handleSaveTransaction = async (tx: Transaction) => {
+    if (!session?.user) return;
+
+    const newTx = {
+      ...tx,
+      user_id: session.user.id
+    };
+
+    // Optimistic Update
+    setTransactions([newTx as Transaction, ...transactions]);
     setShowAdd(false);
     setActiveQuickCat(null);
+
+    // Supabase Update
+    const { error } = await supabase.from('transactions').insert([newTx]);
+    if (error) {
+      console.error('Error saving transaction:', error);
+      // Revert if error
+      fetchData();
+    }
   };
 
-  const handleSaveAccount = (acc: Account) => {
-    setAccounts([...accounts, acc]);
+  const handleSaveAccount = async (acc: Account) => {
+    if (!session?.user) return;
+
+    const newAcc = {
+      ...acc,
+      user_id: session.user.id
+    };
+
+    // Optimistic Update
+    setAccounts([...accounts, newAcc as Account]);
     setShowAddAccount(false);
+
+    // Supabase Update
+    const { error } = await supabase.from('accounts').insert([newAcc]);
+    if (error) {
+      console.error('Error saving account:', error);
+      fetchData();
+    }
   };
 
   const handleQuickAdd = (cat: Category) => {
@@ -1104,6 +1187,22 @@ export default function App() {
   };
 
   const categories: Category[] = ['Dining', 'Retail', 'Travel', 'Home', 'Groceries', 'Entertainment', 'Transport'];
+
+  if (!session) {
+    return <AuthScreen />;
+  }
+
+  if (isLoading && accounts.length === 0) {
+    return (
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 size={40} className="animate-spin text-purple-600 mx-auto" />
+          <p className="meta-label opacity-40 uppercase tracking-widest">Hydrating Session...</p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-purple-600/10 font-sans">
