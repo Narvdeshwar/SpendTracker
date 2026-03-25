@@ -9,6 +9,7 @@ import {
   Bell,
   Search,
   ChevronRight,
+  ChevronLeft,
   ArrowUpRight,
   ArrowDownLeft,
   User,
@@ -24,7 +25,25 @@ import {
   Zap,
   Crown,
   X,
-  Check
+  Check,
+  Send,
+  Delete,
+  PenLine,
+  Coffee,
+  ShoppingBag,
+  Plane,
+  Home as HomeIcon,
+  ShoppingCart,
+  Music,
+  Car,
+  Banknote,
+  Landmark,
+  BarChart2,
+  Bitcoin,
+  Link2,
+  Target,
+  SlidersHorizontal,
+  Activity
 } from 'lucide-react';
 import { 
   PieChart as RechartsPieChart, 
@@ -394,10 +413,11 @@ const Dashboard = ({
         <div className="col-span-2 glass p-6 rounded-3xl space-y-4">
           <div className="flex justify-between items-start">
             <div>
-              <p className="meta-label">Monthly Spending</p>
+              <p className="meta-label flex items-center gap-1"><Target size={10} className="opacity-50" /> Monthly Spending</p>
               <p className="text-3xl font-bold data-value text-ink">${monthSpending.toLocaleString()}</p>
             </div>
             <div className="bg-purple-600/10 text-purple-600 px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1">
+              <Activity size={10} />
               {Math.round((monthSpending/budgetTotal)*100)}% Used
             </div>
           </div>
@@ -405,17 +425,17 @@ const Dashboard = ({
             <div className="h-full bg-purple-600 rounded-full" style={{ width: `${(monthSpending/budgetTotal)*100}%` }} />
           </div>
           <div className="flex justify-between text-[10px] font-bold text-ink/40 uppercase tracking-widest">
-            <span>Left to Spend</span>
+            <span className="flex items-center gap-1"><Wallet size={10} /> Left to Spend</span>
             <span className="text-ink/80 data-value">${budgetRemaining.toLocaleString()}</span>
           </div>
         </div>
 
         <div className="glass p-5 rounded-3xl space-y-1">
-          <p className="meta-label">Daily Avg</p>
+          <p className="meta-label flex items-center gap-1"><BarChart2 size={10} className="opacity-50" /> Daily Avg</p>
           <p className="text-xl font-bold data-value text-purple-600">${dailyAverage.toFixed(2)}</p>
         </div>
         <div className="glass p-5 rounded-3xl space-y-1">
-          <p className="meta-label">Transactions</p>
+          <p className="meta-label flex items-center gap-1"><ArrowUpRight size={10} className="opacity-50" /> Transactions</p>
           <p className="text-xl font-bold data-value text-ink/80">{transactions.length}</p>
         </div>
       </section>
@@ -619,7 +639,14 @@ const BudgetPage = () => {
               <div key={b.category} className="glass p-6 rounded-3xl space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: b.color }} />
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: b.color + '18', color: b.color }}>
+                      {b.category === 'Dining' ? <Coffee size={16} /> :
+                       b.category === 'Retail' ? <ShoppingBag size={16} /> :
+                       b.category === 'Home' ? <HomeIcon size={16} /> :
+                       b.category === 'Transport' ? <Car size={16} /> :
+                       b.category === 'Groceries' ? <ShoppingCart size={16} /> :
+                       <Target size={16} />}
+                    </div>
                     <p className="text-sm font-bold text-ink">{b.category}</p>
                   </div>
                   <p className="text-[10px] font-bold text-ink/40 uppercase tracking-widest">
@@ -684,9 +711,9 @@ const AddAccount = ({ onBack, onSave }: { onBack: () => void, onSave: (account: 
         className="fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[400px] glass z-[60] flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
-          <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Back</button>
+          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><ChevronLeft size={18} /></button>
           <h2 className="text-sm font-bold uppercase tracking-widest">Connect Wealth</h2>
-          <div className="w-10" />
+          <div className="w-9" />
         </header>
 
         <div className="flex-1 px-8 pt-12 space-y-10 overflow-y-auto no-scrollbar">
@@ -719,16 +746,22 @@ const AddAccount = ({ onBack, onSave }: { onBack: () => void, onSave: (account: 
             <div className="space-y-3">
               <p className="meta-label">Allocation Class</p>
               <div className="grid grid-cols-2 gap-4">
-                {(['checking', 'savings', 'investment', 'crypto'] as const).map(type => (
+                {([
+                  { type: 'checking', icon: Banknote, label: 'Checking' },
+                  { type: 'savings', icon: Landmark, label: 'Savings' },
+                  { type: 'investment', icon: BarChart2, label: 'Investment' },
+                  { type: 'crypto', icon: Bitcoin, label: 'Crypto' },
+                ] as const).map(({ type, icon: Icon, label }) => (
                   <button
                     key={type}
                     onClick={() => setFormData({...formData, type})}
                     className={cn(
-                      "p-5 rounded-2xl border-2 text-[10px] font-bold uppercase tracking-widest transition-all",
+                      "p-5 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all",
                       formData.type === type ? "bg-purple-600 text-white border-purple-600 shadow-xl shadow-purple-600/20" : "glass border-transparent opacity-40"
                     )}
                   >
-                    {type}
+                    <Icon size={22} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
                   </button>
                 ))}
               </div>
@@ -738,8 +771,9 @@ const AddAccount = ({ onBack, onSave }: { onBack: () => void, onSave: (account: 
           <button 
             onClick={handleSave}
             disabled={!formData.name || !formData.balance}
-            className="w-full py-6 bg-purple-600 text-white rounded-[2rem] font-bold uppercase tracking-widest shadow-2xl shadow-purple-600/40 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all"
+            className="w-full py-6 bg-purple-600 text-white rounded-[2rem] font-bold uppercase tracking-widest shadow-2xl shadow-purple-600/40 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all flex items-center justify-center gap-3"
           >
+            <Link2 size={20} />
             Confirm Attachment
           </button>
         </div>
@@ -789,9 +823,9 @@ const AddTransaction = ({ onBack, onSave }: { onBack: () => void, onSave: (tx: T
         className="fixed inset-0 sm:inset-y-12 sm:mx-auto sm:max-w-md sm:rounded-[3rem] glass z-[70] flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
-          <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Cancel</button>
+          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><X size={18} /></button>
           <h2 className="text-sm font-bold uppercase tracking-widest">Entry</h2>
-          <button onClick={handleSave} className="text-[10px] font-bold uppercase tracking-widest text-purple-600 font-black">Post</button>
+          <button onClick={handleSave} className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-600/30 active:scale-90 transition-all"><Send size={16} /></button>
         </header>
 
         <div className="flex-1 flex flex-col px-8 pt-8 space-y-8 overflow-y-auto no-scrollbar pb-32">
@@ -816,27 +850,31 @@ const AddTransaction = ({ onBack, onSave }: { onBack: () => void, onSave: (tx: T
           <div className="space-y-4">
             <p className="meta-label">Classification</p>
             <div className="grid grid-cols-4 gap-3">
-              {(['Dining', 'Retail', 'Travel', 'Home', 'Groceries', 'Transport'] as Category[]).map((cat) => (
+              {([
+                { cat: 'Dining', icon: Coffee },
+                { cat: 'Retail', icon: ShoppingBag },
+                { cat: 'Travel', icon: Plane },
+                { cat: 'Home', icon: HomeIcon },
+                { cat: 'Groceries', icon: ShoppingCart },
+                { cat: 'Transport', icon: Car },
+              ] as { cat: Category, icon: React.ElementType }[]).map(({ cat, icon: Icon }) => (
                 <button 
                   key={cat} 
                   onClick={() => setCategory(cat)}
                   className={cn(
                     "glass py-4 rounded-xl flex flex-col items-center gap-2 transition-all border-2",
-                    category === cat ? "border-purple-600/40 bg-white" : "border-transparent opacity-50"
+                    category === cat ? "border-purple-600/40 bg-white text-purple-600" : "border-transparent opacity-50 text-ink"
                   )}
                 >
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-full",
-                    category === cat ? "bg-purple-600" : "bg-black/10"
-                  )} />
-                  <span className="text-[8px] font-black uppercase tracking-widest text-ink">{cat}</span>
+                  <Icon size={18} />
+                  <span className="text-[8px] font-black uppercase tracking-widest">{cat}</span>
                 </button>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((key) => (
+            {([1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'] as (number | string)[]).map((key) => (
               <button 
                 key={key}
                 onClick={() => {
@@ -845,7 +883,7 @@ const AddTransaction = ({ onBack, onSave }: { onBack: () => void, onSave: (tx: T
                 }}
                 className="h-16 glass rounded-2xl text-2xl font-bold data-value flex items-center justify-center active:bg-purple-600 text-ink active:text-white transition-all"
               >
-                {key}
+                {key === 'DEL' ? <Delete size={22} /> : key}
               </button>
             ))}
           </div>
@@ -870,9 +908,11 @@ const QuickAddDrawer = ({ categories, onAdd }: { categories: Category[], onAdd: 
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 floating-drawer-tab z-[40]"
+        className="fixed right-0 top-1/2 -translate-y-1/2 floating-drawer-tab z-[40] flex flex-col items-center gap-1"
+        title="Track Spend"
       >
-        Track Spend
+        <PenLine size={16} />
+        <span className="text-[7px] font-black uppercase tracking-widest leading-none">Log</span>
       </button>
 
       <AnimatePresence>
@@ -951,9 +991,9 @@ const UserManagement = ({ onBack, onExport }: { onBack: () => void, onExport: ()
         className="fixed inset-0 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-[400px] glass z-[100] flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
-          <button onClick={onBack} className="text-[10px] font-extrabold uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity">Dismiss</button>
+          <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><ChevronLeft size={18} /></button>
           <h2 className="text-sm font-black uppercase tracking-widest">Settings</h2>
-          <div className="w-10" />
+          <div className="w-9" />
         </header>
 
         <div className="px-8 pt-12 space-y-10 flex-1 overflow-y-auto no-scrollbar">
@@ -988,15 +1028,15 @@ const UserManagement = ({ onBack, onExport }: { onBack: () => void, onExport: ()
               
               <button className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-black/5 text-ink/40 flex items-center justify-center">
-                    <Settings size={22} />
+                  <div className="w-12 h-12 rounded-2xl bg-black/5 text-ink/40 flex items-center justify-center group-hover:bg-purple-600/10 group-hover:text-purple-600 transition-all">
+                    <SlidersHorizontal size={22} />
                   </div>
                   <div className="text-left">
                     <span className="text-sm font-bold text-ink block">Preferences</span>
                     <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">System Config</span>
                   </div>
                 </div>
-                <ChevronRight size={18} className="text-ink/20" />
+                <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />
               </button>
             </div>
           </div>
