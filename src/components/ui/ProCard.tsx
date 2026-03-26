@@ -13,7 +13,7 @@ export const ProCard: React.FC = () => (
       <h3 className="text-lg font-bold">Unlock PennyTrack Pro</h3>
       <p className="text-xs opacity-70 leading-relaxed mt-1">AI insights, multi-currency support, and unlimited exports.</p>
     </div>
-    <button className="w-full py-3 bg-white text-ink text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-opacity-90 transition-all relative z-10">
+    <button className="w-full py-4 bg-white text-ink text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-white/90 active:scale-95 transition-all relative z-10 shadow-xl shadow-black/20">
       Upgrade — ₹199/mo
     </button>
   </div>
