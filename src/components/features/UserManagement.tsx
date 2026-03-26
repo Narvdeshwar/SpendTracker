@@ -15,14 +15,14 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onBack}
-        className="fixed inset-0 bg-black/5 backdrop-blur-md z-[95]"
+        className="fixed inset-0 bg-black/5 backdrop-blur-md z-95" 
+        onClick={onBack} 
       />
       <motion.div 
         initial={{ x: '-100%' }}
         animate={{ x: 0 }}
         exit={{ x: '-100%' }}
-        className="fixed inset-0 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-[400px] glass z-[100] flex flex-col shadow-2xl overflow-hidden"
+        className="fixed inset-0 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-[400px] glass z-100 flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
           <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><ChevronLeft size={18} /></button>
@@ -32,7 +32,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
 
         <div className="px-8 pt-12 space-y-10 flex-1 overflow-y-auto no-scrollbar">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-24 h-24 rounded-[2rem] bg-purple-600/10 flex items-center justify-center border-2 border-purple-600/20 shadow-xl shadow-purple-600/5">
+            <div className="w-24 h-24 rounded-4xl bg-purple-600/10 flex items-center justify-center border-2 border-purple-600/20 shadow-xl shadow-purple-600/5">
               <User size={48} className="text-purple-600" />
             </div>
             <div className="text-center">
@@ -46,7 +46,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
             <div className="grid grid-cols-1 gap-3">
               <button 
                 onClick={onExport}
-                className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
+                className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-purple-600/5 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
@@ -60,7 +60,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
                 <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />
               </button>
               
-              <button className="w-full glass p-6 rounded-[2rem] flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20">
+              <button className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-black/5 text-ink/40 flex items-center justify-center group-hover:bg-purple-600/10 group-hover:text-purple-600 transition-all">
                     <SlidersHorizontal size={22} />
@@ -75,7 +75,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
             </div>
           </div>
 
-          <div className="p-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-[2.5rem] text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
+          <div className="p-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-4xl text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
@@ -91,10 +91,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
         </div>
 
         <div className="p-8">
-          <button 
-            onClick={() => supabase.auth.signOut()}
-            className="w-full py-6 glass text-rose-500 rounded-[2rem] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs"
-          >
+          <button className="w-full py-6 glass text-rose-500 rounded-4xl font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-rose-50 transition-all border-transparent hover:border-rose-100 text-xs" onClick={() => supabase.auth.signOut()}>
             <LogOut size={20} />
             Safe Logout
           </button>

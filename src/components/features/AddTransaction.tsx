@@ -41,14 +41,14 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onBack}
-        className="fixed inset-0 bg-black/10 backdrop-blur-xl z-[65]"
+        className="fixed inset-0 bg-black/10 backdrop-blur-xl z-60"
       />
       <motion.div 
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-0 sm:inset-y-12 sm:mx-auto sm:max-w-md sm:rounded-[3rem] glass z-[70] flex flex-col shadow-2xl overflow-hidden"
+        className="fixed inset-0 sm:inset-y-12 sm:mx-auto sm:max-w-md sm:rounded-[3rem] glass z-70 flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
           <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><X size={18} /></button>

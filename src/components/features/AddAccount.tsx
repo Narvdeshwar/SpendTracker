@@ -36,13 +36,13 @@ export const AddAccount: React.FC<AddAccountProps> = ({ onBack, onSave }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onBack}
-        className="fixed inset-0 bg-black/5 backdrop-blur-md z-[55]"
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-55"
       />
       <motion.div 
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
-        className="fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[400px] glass z-[60] flex flex-col shadow-2xl overflow-hidden"
+        className="fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[400px] glass z-60 flex flex-col shadow-2xl overflow-hidden"
       >
         <header className="px-6 pt-12 pb-4 flex justify-between items-center text-ink ios-divider">
           <button onClick={onBack} className="w-9 h-9 rounded-full glass flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity active:scale-90"><ChevronLeft size={18} /></button>
@@ -105,7 +105,7 @@ export const AddAccount: React.FC<AddAccountProps> = ({ onBack, onSave }) => {
           <button 
             onClick={handleSave}
             disabled={!formData.name || !formData.balance}
-            className="w-full py-6 bg-purple-600 text-white rounded-[2rem] font-bold uppercase tracking-widest shadow-2xl shadow-purple-600/40 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all flex items-center justify-center gap-3"
+            className="w-full py-5 bg-purple-600 text-white rounded-4xl font-bold uppercase tracking-widest shadow-xl shadow-purple-600/30 disabled:opacity-30 disabled:shadow-none active:scale-95 transition-all flex items-center justify-center gap-3"
           >
             <Link2 size={20} />
             Confirm Attachment

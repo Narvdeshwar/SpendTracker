@@ -22,12 +22,16 @@ export const AccountCard: React.FC<AccountCardProps> = ({ acc }) => (
       </div>
       <div className="text-right">
         <p className="text-2xl font-bold data-value text-ink">₹{acc.balance.toLocaleString()}</p>
-        <p className={cn(
-          "text-[10px] font-bold uppercase tracking-widest",
-          acc.balance > acc.initialBalance ? "text-emerald-500" : "text-rose-500"
-        )}>
-          {acc.balance > acc.initialBalance ? '+' : ''}{((acc.balance - acc.initialBalance) / acc.initialBalance * 100).toFixed(1)}% Yield
-        </p>
+        {acc.initialBalance && acc.initialBalance !== 0 ? (
+          <p className={cn(
+            "text-[10px] font-bold uppercase tracking-widest",
+            acc.balance > acc.initialBalance ? "text-emerald-500" : "text-rose-500"
+          )}>
+            {acc.balance > acc.initialBalance ? '+' : ''}{((acc.balance - acc.initialBalance) / acc.initialBalance * 100).toFixed(1)}% Yield
+          </p>
+        ) : (
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink/20 italic">No Yield Data</p>
+        )}
       </div>
     </div>
     <div className="h-1 w-full bg-black/5 rounded-full relative overflow-hidden">

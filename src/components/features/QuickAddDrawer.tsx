@@ -23,7 +23,7 @@ export const QuickAddDrawer: React.FC<QuickAddDrawerProps> = ({ categories, onAd
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 floating-drawer-tab z-[40] flex flex-col items-center gap-1"
+        className="fixed right-0 top-1/2 -translate-y-1/2 floating-drawer-tab z-40 flex flex-col items-center gap-1"
         title="Track Spend"
       >
         <PenLine size={16} />
@@ -38,14 +38,14 @@ export const QuickAddDrawer: React.FC<QuickAddDrawerProps> = ({ categories, onAd
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80]"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-80"
             />
             <motion.div 
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 w-80 glass z-[90] flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.2)]"
+              className="fixed right-0 top-0 bottom-0 w-80 glass z-90 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.2)]"
             >
               <div className="p-8 space-y-8">
                 <div className="flex justify-between items-center">

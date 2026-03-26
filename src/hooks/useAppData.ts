@@ -23,22 +23,22 @@ export const useAppData = (session: Session | null) => {
     
     setIsLoading(true);
     try {
-      // Fetch Transactions
+      // Fetch Transactions (Explicit column selection)
       const { data: txData } = await supabase
         .from('transactions')
-        .select('*')
+        .select('id, amount, category, date, notes, merchant, type, user_id')
         .eq('user_id', session.user.id)
         .order('date', { ascending: false });
 
       if (txData) setTransactions(txData);
 
-      // Fetch Accounts
+      // Fetch Accounts (Explicit column selection to avoid column-not-found errors)
       const { data: accData } = await supabase
         .from('accounts')
-        .select('*')
+        .select('id, name, institution, balance, type, user_id')
         .eq('user_id', session.user.id);
 
-      if (accData) setAccounts(accData);
+      if (accData) setAccounts(accData as Account[]);
     } catch (err) {
       console.error('Core sync failed:', err);
     } finally {
@@ -72,15 +72,18 @@ export const useAppData = (session: Session | null) => {
   const saveAccount = async (acc: any) => {
     if (!session?.user?.id) return;
 
+    // We explicitly exclude 'initialBalance' because the Supabase schema doesn't have it
     const newAcc = { 
-      ...acc, 
-      user_id: session.user.id, 
-      id: crypto.randomUUID(), 
-      initialBalance: acc.balance 
+      id: crypto.randomUUID(),
+      user_id: session.user.id,
+      name: acc.name,
+      institution: acc.institution,
+      balance: acc.balance,
+      type: acc.type
     };
 
     // Optimistic Update
-    setAccounts(prev => [...prev, newAcc]);
+    setAccounts(prev => [...prev, { ...newAcc, initialBalance: acc.balance }]);
 
     await supabase.from('accounts').insert(newAcc);
     fetchData();

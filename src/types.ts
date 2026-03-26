@@ -23,7 +23,7 @@ export interface Account {
   name: string;
   institution: string;
   balance: number;
-  initialBalance: number;
+  initialBalance?: number;
   type: 'checking' | 'savings' | 'investment' | 'crypto';
 }
 

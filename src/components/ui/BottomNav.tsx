@@ -24,14 +24,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-black/5 px-4 pb-10 pt-4 flex justify-around items-center z-[50]">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-black/5 px-4 pb-10 pt-4 flex justify-around items-center z-50">
       {navItems.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
             "flex flex-col items-center gap-1.5 transition-all duration-300 w-16",
-            tab.isSpecial ? "bg-purple-600 p-4 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white flex-shrink-0" : "opacity-30",
+            tab.isSpecial ? "bg-purple-600 p-4 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white shrink-0" : "opacity-30",
             activeTab === tab.id && !tab.isSpecial && "opacity-100 text-purple-600",
             activeTab === tab.id && tab.isSpecial && "scale-110 rotate-90"
           )}
