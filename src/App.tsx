@@ -51,12 +51,14 @@ export default function App() {
     setActiveQuickCat,
     transactions,
     accounts,
+    friends,
     isLoading,
     handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
     handleSaveBulk,
     handleQuickAdd,
+    addFriend,
     categories
   } = useApp();
 
@@ -150,6 +152,8 @@ export default function App() {
             <AddTransaction 
               initialCategory={activeQuickCat}
               accounts={accounts}
+              friends={friends}
+              onAddFriend={addFriend}
               onBack={() => {
                 setShowAdd(false);
                 setActiveQuickCat(null);

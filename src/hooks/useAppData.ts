@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { Transaction, Account } from '../types';
+import { Transaction, Account, Friend } from '../types';
 import { INITIAL_TRANSACTIONS, INITIAL_ACCOUNTS } from '../constants/mockData';
 
 /**
@@ -18,6 +18,7 @@ export const useAppData = (session: Session | null) => {
     return local ? JSON.parse(local) : INITIAL_TRANSACTIONS;
   });
   const [accounts, setAccounts] = useState<Account[]>(INITIAL_ACCOUNTS);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('synced');
 
@@ -78,7 +79,7 @@ export const useAppData = (session: Session | null) => {
     try {
       const { data: txData } = await supabase
         .from('transactions')
-        .select('id, amount, category, date, notes, merchant, type, user_id, account_id, split_count')
+        .select('id, amount, category, date, notes, merchant, type, user_id, account_id, splits')
         .eq('user_id', session.user.id)
         .order('date', { ascending: false });
 
@@ -90,6 +91,13 @@ export const useAppData = (session: Session | null) => {
         .eq('user_id', session.user.id);
 
       if (accData) setAccounts(accData as Account[]);
+
+      const { data: friData } = await supabase
+        .from('friends')
+        .select('id, name, avatar, user_id')
+        .eq('user_id', session.user.id);
+
+      if (friData) setFriends(friData);
     } catch (err) {
       console.error('Core sync failed:', err);
     } finally {
@@ -142,6 +150,13 @@ export const useAppData = (session: Session | null) => {
     fetchData();
   };
 
+  const addFriend = async (name: string) => {
+    if (!session?.user?.id) return;
+    const newFriend = { id: crypto.randomUUID(), name, user_id: session.user.id };
+    setFriends(prev => [...prev, newFriend]);
+    await supabase.from('friends').insert(newFriend);
+  };
+
   const saveTransactionsBulk = async (txs: any[]) => {
     if (!session?.user?.id) return;
     const newTxs = txs.map(tx => ({ ...tx, user_id: session.user.id, id: crypto.randomUUID() }));
@@ -157,11 +172,13 @@ export const useAppData = (session: Session | null) => {
   return {
     transactions,
     accounts,
+    friends,
     isLoading,
     syncStatus,
     saveTransaction,
     saveTransactionsBulk,
     saveAccount,
+    addFriend,
     refresh: fetchData,
     forceSync: flushOutbox
   };

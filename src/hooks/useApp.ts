@@ -40,10 +40,12 @@ export const useApp = () => {
   const { 
     transactions, 
     accounts, 
+    friends,
     isLoading, 
     saveTransaction, 
     saveTransactionsBulk,
-    saveAccount 
+    saveAccount,
+    addFriend
   } = useAppData(session);
 
   /**
@@ -108,12 +110,14 @@ export const useApp = () => {
     setActiveQuickCat,
     transactions,
     accounts,
+    friends,
     isLoading,
     handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
     handleSaveBulk,
     handleQuickAdd,
+    addFriend,
     categories
   };
 };

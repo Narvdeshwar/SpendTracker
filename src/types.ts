@@ -1,6 +1,13 @@
 export type Category = 'Dining' | 'Retail' | 'Travel' | 'Home' | 'Groceries' | 'Entertainment' | 'Transport' | 'Other';
 export type Format = 'CSV' | 'JSON';
 
+export interface Friend {
+  id: string;
+  name: string;
+  avatar?: string;
+  user_id: string;
+}
+
 export interface Transaction {
   id: string;
   amount: number;
@@ -10,7 +17,7 @@ export interface Transaction {
   merchant: string;
   type: 'debit' | 'credit';
   account_id: string;
-  split_count?: number; // Number of people splitting the bill
+  splits?: { friend_id: string; amount: number }[];
 }
 
 export interface Budget {

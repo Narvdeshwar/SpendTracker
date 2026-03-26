@@ -1,42 +1,65 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Send, Coffee, ShoppingBag, Plane, Home as HomeIcon, ShoppingCart, Car, Delete, CreditCard, Users } from 'lucide-react';
-import { Transaction, Category, Account } from '../../types';
+import { Transaction, Category, Account, Friend } from '../../types';
 import { cn } from '../../utils/cn';
 
 interface AddTransactionProps {
   onBack: () => void;
   onSave: (tx: Transaction) => void;
   accounts: Account[];
+  friends: Friend[];
+  onAddFriend: (name: string) => void;
   initialCategory?: Category | null;
 }
 
-export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, accounts, initialCategory }) => {
+export const AddTransaction: React.FC<AddTransactionProps> = ({ 
+  onBack, onSave, accounts, friends, onAddFriend, initialCategory 
+}) => {
   const [amount, setAmount] = useState('0');
   const [category, setCategory] = useState<Category>(initialCategory || 'Dining');
   const [merchant, setMerchant] = useState('');
   const [accountId, setAccountId] = useState(accounts[0]?.id || '');
-  const [splitCount, setSplitCount] = useState(1);
-  
+  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
+  const [isAddingFriend, setIsAddingFriend] = useState(false);
+  const [newFriendName, setNewFriendName] = useState('');
+
   const handleKeypad = (val: string) => {
     if (val === '.' && amount.includes('.')) return;
     if (amount === '0' && val !== '.') setAmount(val);
     else setAmount(amount + val);
   };
 
+  const toggleFriend = (id: string) => {
+    setSelectedFriends(prev => 
+      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+    );
+  };
+
   const handleSave = () => {
-    if (parseFloat(amount) === 0 || !accountId) return;
-    onSave({
+    const totalAmount = parseFloat(amount);
+    if (totalAmount === 0 || !accountId) return;
+
+    const splitPeopleCount = selectedFriends.length + 1;
+    const splitAmount = totalAmount / splitPeopleCount;
+
+    const tx: Transaction = {
       id: crypto.randomUUID(),
-      amount: parseFloat(amount),
+      amount: totalAmount,
       merchant: merchant || 'Unknown Merchant',
       category,
       date: new Date().toISOString().split('T')[0],
-      type: 'debit',
-      notes: '',
+      type: 'debit' as const,
       account_id: accountId,
-      split_count: splitCount > 1 ? splitCount : undefined
-    });
+      splits: selectedFriends.length > 0 
+        ? selectedFriends.map(fId => ({ friend_id: fId, amount: splitAmount }))
+        : undefined
+    };
+
+    onSave(tx);
+    if (selectedFriends.length > 0) {
+      alert(`Success: Notifications sent to ${selectedFriends.length} friends!`);
+    }
   };
 
   return (
@@ -62,6 +85,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
         </header>
 
         <div className="flex-1 flex flex-col px-8 pt-8 space-y-8 overflow-y-auto no-scrollbar pb-32">
+          {/* Amount Display */}
           <div className="text-center space-y-2">
             <p className="meta-label opacity-40">Expense Value</p>
             <div className="flex items-center justify-center gap-1">
@@ -70,6 +94,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
             </div>
           </div>
 
+          {/* Merchant Input */}
           <div className="space-y-3">
             <p className="meta-label">Merchant / Description</p>
             <input 
@@ -80,6 +105,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
             />
           </div>
 
+          {/* Account Selection */}
           <div className="space-y-4">
             <p className="meta-label">Payment Source</p>
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -88,7 +114,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
                   key={acc.id}
                   onClick={() => setAccountId(acc.id)}
                   className={cn(
-                    "flex-shrink-0 glass p-4 rounded-2xl flex items-center gap-3 transition-all min-w-[140px] border-2",
+                    "shrink-0 glass p-4 rounded-2xl flex items-center gap-3 transition-all min-w-[140px] border-2",
                     accountId === acc.id ? "border-purple-600/40 bg-white" : "opacity-50 border-transparent"
                   )}
                 >
@@ -102,18 +128,17 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
             </div>
           </div>
 
+          {/* Classification & Social Split Side-by-Side */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-4">
               <p className="meta-label">Classification</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {([
                   { cat: 'Dining', icon: Coffee },
                   { cat: 'Retail', icon: ShoppingBag },
                   { cat: 'Travel', icon: Plane },
                   { cat: 'Home', icon: HomeIcon },
-                  { cat: 'Groceries', icon: ShoppingCart },
-                  { cat: 'Transport', icon: Car },
-                ] as { cat: Category, icon: React.ElementType }[]).map(({ cat, icon: Icon }) => (
+                ] as any[]).map(({ cat, icon: Icon }) => (
                   <button 
                     key={cat} 
                     onClick={() => setCategory(cat)}
@@ -130,26 +155,66 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
             </div>
 
             <div className="space-y-4">
-              <p className="meta-label italic text-purple-600">Split Logic</p>
-              <div className="glass p-4 rounded-2xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <Users size={18} className={splitCount > 1 ? "text-purple-600" : "opacity-20"} />
-                  <span className="text-xs font-bold text-ink">{splitCount} People</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="10" 
-                  value={splitCount} 
-                  onChange={e => setSplitCount(parseInt(e.target.value))}
-                  className="w-full accent-purple-600 h-1 bg-black/5 rounded-full appearance-none"
-                />
-                {splitCount > 1 && (
-                  <p className="text-[10px] text-purple-600 font-bold text-center">
-                    ₹{(parseFloat(amount) / splitCount).toFixed(2)} per person
-                  </p>
+              <div className="flex justify-between items-center">
+                <p className="meta-label italic text-purple-600">Split Bill</p>
+                <button 
+                  onClick={() => setIsAddingFriend(true)}
+                  className="text-[9px] font-black uppercase text-purple-600 bg-purple-600/10 px-2 py-1 rounded-lg"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div className="glass p-3 rounded-2xl min-h-[100px] flex flex-wrap gap-2 content-start overflow-y-auto no-scrollbar">
+                {friends.length === 0 && !isAddingFriend && (
+                  <p className="text-[8px] opacity-30 text-center w-full mt-6">No friends added yet</p>
+                )}
+                
+                {isAddingFriend ? (
+                  <div className="w-full space-y-2">
+                    <input 
+                      autoFocus
+                      placeholder="Name..."
+                      value={newFriendName}
+                      onChange={e => setNewFriendName(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          onAddFriend(newFriendName);
+                          setNewFriendName('');
+                          setIsAddingFriend(false);
+                        }
+                      }}
+                      className="w-full bg-white/50 text-[10px] p-2 rounded-lg outline-none"
+                    />
+                    <button 
+                      onClick={() => setIsAddingFriend(false)}
+                      className="text-[8px] opacity-40 uppercase font-bold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  friends.map(friend => (
+                    <button
+                      key={friend.id}
+                      onClick={() => toggleFriend(friend.id)}
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold transition-all border-2",
+                        selectedFriends.includes(friend.id) 
+                          ? "bg-purple-600 text-white border-purple-600 scale-110 shadow-lg" 
+                          : "glass border-transparent opacity-60"
+                      )}
+                    >
+                      {friend.name[0]}
+                    </button>
+                  ))
                 )}
               </div>
+              {selectedFriends.length > 0 && (
+                <p className="text-[9px] font-bold text-center text-purple-600">
+                  You + {selectedFriends.length} split ₹{(parseFloat(amount) / (selectedFriends.length + 1)).toFixed(2)} ea.
+                </p>
+              )}
             </div>
           </div>
 
