@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, User, ArrowRight, Loader2, Apple, Github } from 'lucide-react';
+import { Zap, Mail, Lock, User, ArrowRight, Loader2, Apple, Github, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -15,18 +15,24 @@ export const AuthScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setSuccess(null);
 
-    const { error: authError } = isLogin 
+    const { data, error: authError } = isLogin 
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password });
 
     if (authError) {
       setError(authError.message);
+      setIsLoading(false);
+    } else if (!isLogin && data.user && data.session === null) {
+      // User signed up but needs to confirm email (standard Supabase setting)
+      setSuccess('Verification email sent! Please check your inbox to activate your account.');
       setIsLoading(false);
     }
   };
@@ -111,6 +117,17 @@ export const AuthScreen = () => {
               >
                 <Zap size={14} />
                 {error}
+              </motion.div>
+            )}
+
+            {success && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-xs font-bold flex items-center gap-2 border border-emerald-100"
+              >
+                <Check size={14} />
+                {success}
               </motion.div>
             )}
 

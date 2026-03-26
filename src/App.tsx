@@ -315,7 +315,7 @@ const ExportPage = ({ transactions, accounts, onBack }: { transactions: Transact
                         "px-4 py-3 text-right data-value",
                         t.type === 'credit' ? "text-emerald-600" : "text-ink"
                       )}>
-                        {t.type === 'credit' ? '+' : '-'}${t.amount.toFixed(2)}
+                        {t.type === 'credit' ? '+' : '-'}₹{t.amount.toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -404,7 +404,7 @@ const Dashboard = ({
       <section className="px-6">
         <div className="text-center py-4">
           <p className="text-5xl font-bold data-value text-primary tracking-tighter">
-            ${netWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₹{netWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           <div className="mt-2 flex items-center justify-center gap-2">
             <span className="text-[10px] font-bold uppercase text-emerald-500 flex items-center gap-1">
@@ -419,7 +419,7 @@ const Dashboard = ({
           <div className="flex justify-between items-start">
             <div>
               <p className="meta-label flex items-center gap-1"><Target size={10} className="opacity-50" /> Monthly Spending</p>
-              <p className="text-3xl font-bold data-value text-ink">${monthSpending.toLocaleString()}</p>
+              <p className="text-3xl font-bold data-value text-ink">₹{monthSpending.toLocaleString()}</p>
             </div>
             <div className="bg-purple-600/10 text-purple-600 px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1">
               <Activity size={10} />
@@ -431,13 +431,13 @@ const Dashboard = ({
           </div>
           <div className="flex justify-between text-[10px] font-bold text-ink/40 uppercase tracking-widest">
             <span className="flex items-center gap-1"><Wallet size={10} /> Left to Spend</span>
-            <span className="text-ink/80 data-value">${budgetRemaining.toLocaleString()}</span>
+            <span className="text-ink/80 data-value">₹{budgetRemaining.toLocaleString()}</span>
           </div>
         </div>
 
         <div className="glass p-5 rounded-3xl space-y-1">
           <p className="meta-label flex items-center gap-1"><BarChart2 size={10} className="opacity-50" /> Daily Avg</p>
-          <p className="text-xl font-bold data-value text-purple-600">${dailyAverage.toFixed(2)}</p>
+          <p className="text-xl font-bold data-value text-purple-600">₹{dailyAverage.toFixed(2)}</p>
         </div>
         <div className="glass p-5 rounded-3xl space-y-1">
           <p className="meta-label flex items-center gap-1"><ArrowUpRight size={10} className="opacity-50" /> Transactions</p>
@@ -475,7 +475,7 @@ const Dashboard = ({
                   <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-[10px] font-bold text-ink/60 uppercase tracking-wider">{item.name}</span>
                 </div>
-                <span className="text-[10px] font-bold data-value text-ink">${item.value}</span>
+                <span className="text-[10px] font-bold data-value text-ink">₹{item.value}</span>
               </div>
             ))}
           </div>
@@ -541,7 +541,7 @@ const History = () => {
                     "text-lg font-bold data-value",
                     tx.type === 'credit' ? "text-emerald-600" : "text-ink"
                   )}>
-                    {tx.type === 'credit' ? '+' : '-'}${tx.amount.toFixed(2)}
+                    {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -573,7 +573,7 @@ const Assets = ({ accounts, onAddAccount }: { accounts: Account[], onAddAccount:
         <div className="space-y-4">
           <div className="flex justify-between items-center px-1">
             <h3 className="meta-label opacity-40">Liquid & Investments</h3>
-            <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest">Total ${accounts.reduce((s, a) => s + a.balance, 0).toLocaleString()}</span>
+            <span className="text-[10px] font-bold text-purple-600 uppercase tracking-widest">Total ₹{accounts.reduce((s, a) => s + a.balance, 0).toLocaleString()}</span>
           </div>
           <div className="space-y-4">
             {accounts.map((acc) => (
@@ -589,7 +589,7 @@ const Assets = ({ accounts, onAddAccount }: { accounts: Account[], onAddAccount:
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold data-value text-ink">${acc.balance.toLocaleString()}</p>
+                    <p className="text-2xl font-bold data-value text-ink">₹{acc.balance.toLocaleString()}</p>
                     <p className={cn(
                       "text-[10px] font-bold uppercase tracking-widest",
                       acc.balance > acc.initialBalance ? "text-emerald-500" : "text-rose-500"
@@ -655,7 +655,7 @@ const BudgetPage = () => {
                     <p className="text-sm font-bold text-ink">{b.category}</p>
                   </div>
                   <p className="text-[10px] font-bold text-ink/40 uppercase tracking-widest">
-                    <span className="text-ink opacity-100">${b.spent}</span> / ${b.limit}
+                    <span className="text-ink opacity-100">₹{b.spent}</span> / ₹{b.limit}
                   </p>
                 </div>
                 <div className="h-2.5 w-full bg-black/5 rounded-full overflow-hidden">
@@ -737,7 +737,7 @@ const AddAccount = ({ onBack, onSave }: { onBack: () => void, onSave: (account: 
             <div className="space-y-3">
               <p className="meta-label">Current Balance</p>
               <div className="relative">
-                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold opacity-30">$</span>
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold opacity-30">₹</span>
                 <input 
                   type="number"
                   value={formData.balance}
@@ -837,7 +837,7 @@ const AddTransaction = ({ onBack, onSave }: { onBack: () => void, onSave: (tx: T
           <div className="text-center space-y-2">
             <p className="meta-label opacity-40">Expense Value</p>
             <div className="flex items-center justify-center gap-1">
-              <span className="text-3xl font-bold text-ink/30">$</span>
+              <span className="text-3xl font-bold text-ink/30">₹</span>
               <p className="text-7xl font-bold data-value tracking-tighter text-primary">{amount}</p>
             </div>
           </div>
