@@ -6,9 +6,9 @@ import { Transaction, Account } from '../types';
  */
 
 export const INITIAL_TRANSACTIONS: Transaction[] = [
-  { id: '1', amount: 450, category: 'Dining', date: '2026-03-22', merchant: 'Blue Tokai Coffee', type: 'debit', notes: 'Lunch' },
-  { id: '2', amount: 1200, category: 'Retail', date: '2026-03-21', merchant: 'ZARA India', type: 'debit', notes: 'Wardrobe update' },
-  { id: '3', amount: 24000, category: 'Home', date: '2026-03-15', merchant: 'DLF Rent', type: 'debit', notes: 'Monthly rent' },
+  { id: '1', amount: 450, category: 'Dining', date: '2026-03-22', merchant: 'Blue Tokai Coffee', type: 'debit', notes: 'Lunch', account_id: '1' },
+  { id: '2', amount: 1200, category: 'Retail', date: '2026-03-21', merchant: 'ZARA India', type: 'debit', notes: 'Wardrobe update', account_id: '1' },
+  { id: '3', amount: 24000, category: 'Home', date: '2026-03-15', merchant: 'DLF Rent', type: 'debit', notes: 'Monthly rent', account_id: '1' },
 ];
 
 export const INITIAL_ACCOUNTS: Account[] = [

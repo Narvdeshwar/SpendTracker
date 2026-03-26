@@ -149,6 +149,7 @@ export default function App() {
           {showAdd && (
             <AddTransaction 
               initialCategory={activeQuickCat}
+              accounts={accounts}
               onBack={() => {
                 setShowAdd(false);
                 setActiveQuickCat(null);

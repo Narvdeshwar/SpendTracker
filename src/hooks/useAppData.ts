@@ -35,30 +35,30 @@ export const useAppData = (session: Session | null) => {
 
     setSyncStatus('syncing');
     
-    // Process transactions in the outbox
+    // 1. Process transactions in the outbox
     const pendingTxs = outbox.filter((item: any) => item.type === 'transaction');
-    
     if (pendingTxs.length > 0) {
       const { error } = await supabase.from('transactions').insert(
         pendingTxs.map((t: any) => ({ ...t.data, user_id: session.user.id }))
       );
-
       if (!error) {
-        // Success: Clear those items from outbox
         const remaining = outbox.filter((item: any) => item.type !== 'transaction');
         localStorage.setItem('pnt_sync_outbox', JSON.stringify(remaining));
-        setSyncStatus('synced');
-      } else {
-        // Failure: Update retry count
-        const updated = outbox.map((item: any) => {
-          if (item.type === 'transaction') return { ...item, retries: (item.retries || 0) + 1 };
-          return item;
-        }).filter((item: any) => (item.retries || 0) < 10);
-        
-        localStorage.setItem('pnt_sync_outbox', JSON.stringify(updated));
-        setSyncStatus('error');
       }
     }
+
+    // 2. Process account updates in the outbox
+    const pendingAccs = outbox.filter((item: any) => item.type === 'account_update');
+    for (const update of pendingAccs) {
+      const { error } = await supabase.from('accounts').update(update.data).eq('id', update.account_id);
+      if (!error) {
+        const currentOutbox = JSON.parse(localStorage.getItem('pnt_sync_outbox') || '[]');
+        const updatedOutbox = currentOutbox.filter((item: any) => !(item.type === 'account_update' && item.account_id === update.account_id));
+        localStorage.setItem('pnt_sync_outbox', JSON.stringify(updatedOutbox));
+      }
+    }
+    
+    setSyncStatus('synced');
   };
 
   /**
@@ -78,7 +78,7 @@ export const useAppData = (session: Session | null) => {
     try {
       const { data: txData } = await supabase
         .from('transactions')
-        .select('id, amount, category, date, notes, merchant, type, user_id')
+        .select('id, amount, category, date, notes, merchant, type, user_id, account_id, split_count')
         .eq('user_id', session.user.id)
         .order('date', { ascending: false });
 
@@ -103,13 +103,24 @@ export const useAppData = (session: Session | null) => {
 
   const saveTransaction = async (tx: any) => {
     const newTx = { ...tx, id: crypto.randomUUID(), user_id: session?.user?.id };
-    
-    // 1. Immediate UI Update
+    const currentAcc = accounts.find(a => a.id === tx.account_id);
+    if (!currentAcc) return;
+
+    const newBalance = currentAcc.balance - tx.amount;
+
+    // 1. Immediate UI Updates (Double-Entry)
     setTransactions(prev => [newTx, ...prev]);
+    setAccounts(prev => prev.map(acc => 
+      acc.id === tx.account_id ? { ...acc, balance: newBalance } : acc
+    ));
 
     // 2. Queue for Background Sync
     const outbox = JSON.parse(localStorage.getItem('pnt_sync_outbox') || '[]');
-    localStorage.setItem('pnt_sync_outbox', JSON.stringify([...outbox, { type: 'transaction', data: newTx, retries: 0 }]));
+    const items = [
+      { type: 'transaction', data: newTx, retries: 0 },
+      { type: 'account_update', account_id: tx.account_id, data: { balance: newBalance }, retries: 0 }
+    ];
+    localStorage.setItem('pnt_sync_outbox', JSON.stringify([...outbox, ...items]));
     
     // 3. Trigger immediate flush
     flushOutbox();

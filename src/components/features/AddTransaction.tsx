@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Send, Coffee, ShoppingBag, Plane, Home as HomeIcon, ShoppingCart, Car, Delete } from 'lucide-react';
-import { Transaction, Category } from '../../types';
+import { X, Send, Coffee, ShoppingBag, Plane, Home as HomeIcon, ShoppingCart, Car, Delete, CreditCard, Users } from 'lucide-react';
+import { Transaction, Category, Account } from '../../types';
 import { cn } from '../../utils/cn';
 
 interface AddTransactionProps {
   onBack: () => void;
   onSave: (tx: Transaction) => void;
+  accounts: Account[];
   initialCategory?: Category | null;
 }
 
-export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, initialCategory }) => {
+export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, accounts, initialCategory }) => {
   const [amount, setAmount] = useState('0');
   const [category, setCategory] = useState<Category>(initialCategory || 'Dining');
   const [merchant, setMerchant] = useState('');
+  const [accountId, setAccountId] = useState(accounts[0]?.id || '');
+  const [splitCount, setSplitCount] = useState(1);
   
   const handleKeypad = (val: string) => {
     if (val === '.' && amount.includes('.')) return;
@@ -22,15 +25,17 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
   };
 
   const handleSave = () => {
-    if (parseFloat(amount) === 0) return;
+    if (parseFloat(amount) === 0 || !accountId) return;
     onSave({
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(),
       amount: parseFloat(amount),
       merchant: merchant || 'Unknown Merchant',
       category,
       date: new Date().toISOString().split('T')[0],
       type: 'debit',
-      notes: ''
+      notes: '',
+      account_id: accountId,
+      split_count: splitCount > 1 ? splitCount : undefined
     });
   };
 
@@ -76,28 +81,75 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ onBack, onSave, 
           </div>
 
           <div className="space-y-4">
-            <p className="meta-label">Classification</p>
-            <div className="grid grid-cols-4 gap-3">
-              {([
-                { cat: 'Dining', icon: Coffee },
-                { cat: 'Retail', icon: ShoppingBag },
-                { cat: 'Travel', icon: Plane },
-                { cat: 'Home', icon: HomeIcon },
-                { cat: 'Groceries', icon: ShoppingCart },
-                { cat: 'Transport', icon: Car },
-              ] as { cat: Category, icon: React.ElementType }[]).map(({ cat, icon: Icon }) => (
+            <p className="meta-label">Payment Source</p>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+              {accounts.map(acc => (
                 <button 
-                  key={cat} 
-                  onClick={() => setCategory(cat)}
+                  key={acc.id}
+                  onClick={() => setAccountId(acc.id)}
                   className={cn(
-                    "glass py-4 rounded-xl flex flex-col items-center gap-2 transition-all border-2",
-                    category === cat ? "border-purple-600/40 bg-white text-purple-600" : "border-transparent opacity-50 text-ink"
+                    "flex-shrink-0 glass p-4 rounded-2xl flex items-center gap-3 transition-all min-w-[140px] border-2",
+                    accountId === acc.id ? "border-purple-600/40 bg-white" : "opacity-50 border-transparent"
                   )}
                 >
-                  <Icon size={18} />
-                  <span className="text-[8px] font-black uppercase tracking-widest">{cat}</span>
+                  <CreditCard size={18} className={accountId === acc.id ? "text-purple-600" : ""} />
+                  <div className="text-left">
+                    <p className="text-[10px] font-black uppercase text-ink leading-tight">{acc.name}</p>
+                    <p className="text-[10px] opacity-40">₹{acc.balance.toLocaleString()}</p>
+                  </div>
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <p className="meta-label">Classification</p>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { cat: 'Dining', icon: Coffee },
+                  { cat: 'Retail', icon: ShoppingBag },
+                  { cat: 'Travel', icon: Plane },
+                  { cat: 'Home', icon: HomeIcon },
+                  { cat: 'Groceries', icon: ShoppingCart },
+                  { cat: 'Transport', icon: Car },
+                ] as { cat: Category, icon: React.ElementType }[]).map(({ cat, icon: Icon }) => (
+                  <button 
+                    key={cat} 
+                    onClick={() => setCategory(cat)}
+                    className={cn(
+                      "glass py-3 rounded-xl flex flex-col items-center gap-2 transition-all border",
+                      category === cat ? "border-purple-600/40 bg-white text-purple-600" : "border-transparent opacity-50 text-ink"
+                    )}
+                  >
+                    <Icon size={14} />
+                    <span className="text-[7px] font-black uppercase tracking-widest">{cat}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <p className="meta-label italic text-purple-600">Split Logic</p>
+              <div className="glass p-4 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <Users size={18} className={splitCount > 1 ? "text-purple-600" : "opacity-20"} />
+                  <span className="text-xs font-bold text-ink">{splitCount} People</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="10" 
+                  value={splitCount} 
+                  onChange={e => setSplitCount(parseInt(e.target.value))}
+                  className="w-full accent-purple-600 h-1 bg-black/5 rounded-full appearance-none"
+                />
+                {splitCount > 1 && (
+                  <p className="text-[10px] text-purple-600 font-bold text-center">
+                    ₹{(parseFloat(amount) / splitCount).toFixed(2)} per person
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 

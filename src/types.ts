@@ -9,6 +9,8 @@ export interface Transaction {
   notes?: string;
   merchant: string;
   type: 'debit' | 'credit';
+  account_id: string;
+  split_count?: number; // Number of people splitting the bill
 }
 
 export interface Budget {
