@@ -24,7 +24,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-main p-4 pb-10 pt-2 flex justify-around items-end z-50 h-[88px]">
+    <nav className="w-full nav-blur border-t border-line flex justify-around items-center z-50 relative px-4 pt-4" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 24px) + 8px)' }}>
       {navItems.map((tab) => (
         <button
           key={tab.id}

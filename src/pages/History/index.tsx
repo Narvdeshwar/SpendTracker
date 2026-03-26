@@ -6,9 +6,11 @@ import { useHistory } from './useHistory';
 
 interface HistoryProps {
   transactions: Transaction[];
+  onEdit: (tx: Transaction) => void;
+  onDelete: (id: string) => void;
 }
 
-const History: React.FC<HistoryProps> = ({ transactions }) => {
+const History: React.FC<HistoryProps> = ({ transactions, onEdit, onDelete }) => {
   const { groupedTransactions } = useHistory(transactions);
 
   return (
@@ -20,7 +22,12 @@ const History: React.FC<HistoryProps> = ({ transactions }) => {
             <h3 className="meta-label">{group.date}</h3>
             <div className="space-y-3">
               {group.items.map((tx) => (
-                <TransactionItem key={tx.id} tx={tx} />
+                <TransactionItem 
+                  key={tx.id} 
+                  tx={tx} 
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
               ))}
             </div>
           </div>
@@ -29,5 +36,6 @@ const History: React.FC<HistoryProps> = ({ transactions }) => {
     </div>
   );
 };
+
 
 export default History;

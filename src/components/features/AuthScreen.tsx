@@ -141,24 +141,8 @@ export const AuthScreen = () => {
               )}
             </button>
           </form>
-
-          <div className="flex items-center gap-4 py-2">
-            <div className="h-px flex-1 bg-black/5" />
-            <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest">Or Securely Join With</span>
-            <div className="h-px flex-1 bg-black/5" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button className="glass py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-white transition-all text-ink/60 hover:text-ink">
-              <Apple size={18} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Apple</span>
-            </button>
-            <button className="glass py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-white transition-all text-ink/60 hover:text-ink">
-              <Github size={18} />
-              <span className="text-[10px] font-bold uppercase tracking-widest">GitHub</span>
-            </button>
-          </div>
         </div>
+
 
         <p className="text-center text-[10px] font-bold text-ink/30 uppercase tracking-[0.25em]">
           End-to-End Encrypted Financial Data

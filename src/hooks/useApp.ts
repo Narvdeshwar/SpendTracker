@@ -45,8 +45,13 @@ export const useApp = () => {
     saveTransaction, 
     saveTransactionsBulk,
     saveAccount,
-    addFriend
+    addFriend,
+    deleteTransaction,
+    updateTransaction,
+    updateProfile
   } = useAppData(session);
+
+  const [selectedTxForEdit, setSelectedTxForEdit] = useState<any>(null);
 
   /**
    * Proxies bulk transaction saving.
@@ -61,6 +66,7 @@ export const useApp = () => {
   const handleTabChange = (tab: string) => {
     if (tab === 'add') {
       setShowAdd(true);
+      setSelectedTxForEdit(null); // Ensure we're adding blank
     } else {
       setActiveTab(tab);
       setShowExport(false);
@@ -69,11 +75,25 @@ export const useApp = () => {
 
   /**
    * Proxies transaction saving and UI state cleanup.
+   * Now handles both INSERT and UPDATE based on whether tx.id already exists.
    */
   const handleSaveTransaction = async (tx: any) => {
-    await saveTransaction(tx);
+    if (selectedTxForEdit) {
+      await updateTransaction({ ...tx, id: selectedTxForEdit.id });
+    } else {
+      await saveTransaction(tx);
+    }
     setShowAdd(false);
+    setSelectedTxForEdit(null);
     setActiveQuickCat(null);
+  };
+
+  /**
+   * Opens the entry screen in 'Edit' mode.
+   */
+  const handleEditTransaction = (tx: any) => {
+    setSelectedTxForEdit(tx);
+    setShowAdd(true);
   };
 
   /**
@@ -118,6 +138,11 @@ export const useApp = () => {
     handleSaveBulk,
     handleQuickAdd,
     addFriend,
+    deleteTransaction,
+    handleEditTransaction,
+    updateProfile,
+    selectedTxForEdit,
     categories
   };
 };
+

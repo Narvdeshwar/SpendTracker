@@ -32,13 +32,11 @@ import { BottomNav } from './components/ui/BottomNav';
 import { useApp } from './hooks/useApp';
 
 export default function App() {
-  /**
-   * The application logic is decoupled from this JSX file for maximum maintainability.
-   * All state transitions and authentication flows occur within useApp().
-   */
   const {
     session,
+    isLoading,
     activeTab,
+    handleTabChange,
     showAdd,
     setShowAdd,
     showAddAccount,
@@ -52,26 +50,22 @@ export default function App() {
     transactions,
     accounts,
     friends,
-    isLoading,
-    handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
     handleSaveBulk,
     handleQuickAdd,
     addFriend,
+    deleteTransaction,
+    handleEditTransaction,
+    updateProfile,
+    selectedTxForEdit,
     categories
   } = useApp();
 
-  /**
-   * Conditional layout for authentication.
-   */
   if (!session) {
     return <AuthScreen />;
   }
 
-  /**
-   * Application-wide 'Hydration' skeleton.
-   */
   if (isLoading && accounts.length === 0) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
@@ -83,112 +77,137 @@ export default function App() {
     );
   }
 
+  const showingSubPage = showAdd || showAddAccount || showUser || showExport;
+
   return (
-    <div className="min-h-screen bg-bg text-ink selection:bg-purple-600/10 font-sans">
-      <main className="max-w-md mx-auto min-h-screen relative shadow-2xl shadow-black/5 bg-bg border-x border-black/5 overflow-hidden">
-        
-        {/**
-         * Suspense manages the loading state of any lazily imported components.
-         */}
-        <Suspense fallback={
-          <div className="flex items-center justify-center h-screen">
-            <Loader2 className="animate-spin text-purple-600" />
-          </div>
-        }>
-          <AnimatePresence mode="wait">
-            {!showExport ? (
-              /**
-               * Animated tab transitions for an 'App-like' mobile experience.
-               */
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-              >
-                {activeTab === 'dashboard' && (
-                  <Dashboard 
-                    transactions={transactions} 
-                    accounts={accounts} 
-                    onOpenUser={() => setShowUser(true)} 
-                  />
-                )}
-                {activeTab === 'history' && <History transactions={transactions} />}
-                {activeTab === 'budgets' && <BudgetPage />}
-                {activeTab === 'assets' && (
-                  <Assets 
-                    accounts={accounts} 
-                    onAddAccount={() => setShowAddAccount(true)} 
-                  />
-                )}
-              </motion.div>
-            ) : (
-              /** 
-               * Special 'Export' mode - replaces the main view while active.
-               */
-              <ExportPage 
-                transactions={transactions} 
-                accounts={accounts} 
-                onBack={() => {
-                  setShowExport(false);
-                  setShowUser(false);
-                }} 
+    <div className="h-dvh bg-bg text-ink selection:bg-purple-600/10 font-sans overflow-hidden">
+      <main className="max-w-md mx-auto h-full relative shadow-2xl shadow-black/5 bg-bg border-x border-black/5 flex flex-col overflow-hidden">
+        <AnimatePresence mode="popLayout">
+          {!showingSubPage && (
+            <motion.div 
+              key="main-shell"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex-1 flex flex-col h-full overflow-hidden"
+            >
+              <div className="flex-1 flex flex-col overflow-hidden relative">
+                <Suspense fallback={
+                  <div className="flex items-center justify-center flex-1">
+                    <Loader2 className="animate-spin text-purple-600" />
+                  </div>
+                }>
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.02 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="flex-1 flex flex-col overflow-y-auto no-scrollbar"
+                    >
+                      {activeTab === 'dashboard' && (
+                        <Dashboard 
+                          transactions={transactions} 
+                          accounts={accounts} 
+                          onOpenUser={() => setShowUser(true)} 
+                        />
+                      )}
+                      {activeTab === 'history' && (
+                        <History 
+                          transactions={transactions} 
+                          onEdit={handleEditTransaction}
+                          onDelete={deleteTransaction}
+                        />
+                      )}
+                      {activeTab === 'budgets' && <BudgetPage />}
+                      {activeTab === 'assets' && (
+                        <Assets 
+                          accounts={accounts} 
+                          onAddAccount={() => setShowAddAccount(true)} 
+                        />
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </Suspense>
+              </div>
+
+              <QuickAddDrawer 
+                categories={categories} 
+                onAdd={handleQuickAdd} 
               />
-            )}
-          </AnimatePresence>
-        </Suspense>
+              <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+            </motion.div>
+          )}
 
-        {/**
-         * Global Floating UI Elements.
-         */}
-        <QuickAddDrawer 
-          categories={categories} 
-          onAdd={handleQuickAdd} 
-        />
-
-        <AnimatePresence>
           {showAdd && (
-            <AddTransaction 
-              initialCategory={activeQuickCat}
-              accounts={accounts}
-              friends={friends}
-              onAddFriend={addFriend}
-              onBack={() => {
-                setShowAdd(false);
-                setActiveQuickCat(null);
-              }} 
-              onSave={handleSaveTransaction}
-            />
+            <motion.div 
+              key="modal-add" 
+              initial={{ y: '100%' }} 
+              animate={{ y: 0 }} 
+              exit={{ y: '100%' }} 
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-50 bg-bg overflow-hidden"
+            >
+              <AddTransaction 
+                editData={selectedTxForEdit}
+                initialCategory={activeQuickCat}
+                accounts={accounts}
+                friends={friends}
+                onAddFriend={addFriend}
+                onBack={() => {
+                  setShowAdd(false);
+                  setActiveQuickCat(null);
+                }} 
+                onSave={handleSaveTransaction}
+              />
+            </motion.div>
           )}
-        </AnimatePresence>
 
-        <AnimatePresence>
           {showAddAccount && (
-            <AddAccount 
-              onBack={() => setShowAddAccount(false)} 
-              onSave={handleSaveAccount}
-            />
+            <motion.div 
+              key="modal-add-acc" 
+              initial={{ y: '100%' }} 
+              animate={{ y: 0 }} 
+              exit={{ y: '100%' }} 
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-50 bg-bg overflow-hidden"
+            >
+              <AddAccount 
+                onBack={() => setShowAddAccount(false)} 
+                onSave={handleSaveAccount}
+              />
+            </motion.div>
+          )}
+
+          {(showUser || showExport) && (
+            <motion.div 
+              key="modal-user-export" 
+              initial={{ x: '100%' }} 
+              animate={{ x: 0 }} 
+              exit={{ x: '100%' }} 
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-50 bg-bg overflow-hidden"
+            >
+              {showExport ? (
+                <ExportPage 
+                  transactions={transactions} 
+                  accounts={accounts} 
+                  onBack={() => setShowExport(false)} 
+                />
+              ) : (
+                <UserManagement 
+                  session={session}
+                  updateProfile={updateProfile}
+                  onBack={() => setShowUser(false)} 
+                  onExport={() => setShowExport(true)}
+                  onImport={handleSaveBulk}
+                />
+              )}
+            </motion.div>
           )}
         </AnimatePresence>
-
-        <AnimatePresence>
-          {showUser && (
-            <UserManagement 
-              onBack={() => setShowUser(false)} 
-              onExport={() => {
-                setShowExport(true);
-                setShowUser(false);
-              }}
-              onImport={handleSaveBulk}
-            />
-          )}
-        </AnimatePresence>
-
-        {/**
-         * Persistent Mobile Navigation.
-         */}
-        <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
       </main>
     </div>
   );

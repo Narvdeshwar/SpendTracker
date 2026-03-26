@@ -169,6 +169,64 @@ export const useAppData = (session: Session | null) => {
     flushOutbox();
   };
 
+  const deleteTransaction = async (id: string) => {
+    const tx = transactions.find(t => t.id === id);
+    if (!tx || !session?.user?.id) return;
+
+    // 1. Calculate inverse balance change
+    const currentAcc = accounts.find(a => a.id === tx.account_id);
+    if (currentAcc) {
+      const newBalance = tx.type === 'debit' ? currentAcc.balance + tx.amount : currentAcc.balance - tx.amount;
+      setAccounts(prev => prev.map(acc => 
+        acc.id === tx.account_id ? { ...acc, balance: newBalance } : acc
+      ));
+      // Update balance in Supabase
+      await supabase.from('accounts').update({ balance: newBalance }).eq('id', tx.account_id);
+    }
+
+    // 2. Remove locally
+    setTransactions(prev => prev.filter(t => t.id !== id));
+
+    // 3. Remove from Supabase
+    await supabase.from('transactions').delete().eq('id', id);
+  };
+
+  const updateTransaction = async (updatedTx: Transaction) => {
+    const oldTx = transactions.find(t => t.id === updatedTx.id);
+    if (!oldTx || !session?.user?.id) return;
+
+    // 1. Handle balance reconciliation if amount changed
+    const currentAcc = accounts.find(a => a.id === updatedTx.account_id);
+    if (currentAcc && oldTx.amount !== updatedTx.amount) {
+      const difference = updatedTx.amount - oldTx.amount;
+      const newBalance = updatedTx.type === 'debit' ? currentAcc.balance - difference : currentAcc.balance + difference;
+      
+      setAccounts(prev => prev.map(acc => 
+        acc.id === updatedTx.account_id ? { ...acc, balance: newBalance } : acc
+      ));
+      await supabase.from('accounts').update({ balance: newBalance }).eq('id', updatedTx.account_id);
+    }
+
+    // 2. Update locally
+    setTransactions(prev => prev.map(t => t.id === updatedTx.id ? updatedTx : t));
+
+    // 3. Update in Supabase
+    await supabase.from('transactions').update(updatedTx).eq('id', updatedTx.id);
+  };
+
+  const updateProfile = async (name: string) => {
+    if (!session?.user?.id) return;
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: name }
+    });
+    if (!error) {
+      // Trigger a session refresh (handled automatically by onAuthStateChange in useApp)
+      alert("Profile updated successfully!");
+    } else {
+      alert("Error updating profile: " + error.message);
+    }
+  };
+
   return {
     transactions,
     accounts,
@@ -179,7 +237,11 @@ export const useAppData = (session: Session | null) => {
     saveTransactionsBulk,
     saveAccount,
     addFriend,
+    deleteTransaction,
+    updateTransaction,
+    updateProfile,
     refresh: fetchData,
     forceSync: flushOutbox
   };
 };
+
