@@ -55,6 +55,7 @@ export default function App() {
     handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
+    handleSaveBulk,
     handleQuickAdd,
     categories
   } = useApp();
@@ -174,6 +175,7 @@ export default function App() {
                 setShowExport(true);
                 setShowUser(false);
               }}
+              onImport={handleSaveBulk}
             />
           )}
         </AnimatePresence>

@@ -42,8 +42,16 @@ export const useApp = () => {
     accounts, 
     isLoading, 
     saveTransaction, 
+    saveTransactionsBulk,
     saveAccount 
   } = useAppData(session);
+
+  /**
+   * Proxies bulk transaction saving.
+   */
+  const handleSaveBulk = async (txs: any[]) => {
+    await saveTransactionsBulk(txs);
+  };
 
   /**
    * Handles tab change and resets global page states (like export view).
@@ -104,6 +112,7 @@ export const useApp = () => {
     handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
+    handleSaveBulk,
     handleQuickAdd,
     categories
   };

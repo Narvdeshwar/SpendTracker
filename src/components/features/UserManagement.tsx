@@ -1,16 +1,60 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, User, FileDown, ChevronRight, SlidersHorizontal, Zap, LogOut } from 'lucide-react';
+import { ChevronLeft, User, FileDown, ChevronRight, SlidersHorizontal, Zap, LogOut, FileUp } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 interface UserManagementProps {
   onBack: () => void;
   onExport: () => void;
+  onImport: (txs: any[]) => void;
 }
 
-export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport }) => {
+export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport, onImport }) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const text = event.target?.result as string;
+      const lines = text.split('\n');
+      const txs = [];
+
+      // Skip header assuming format: amount,category,merchant,date,type,notes
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const [amount, category, merchant, date, type, notes] = line.split(',');
+        txs.push({
+          amount: parseFloat(amount),
+          category: (category || 'Other') as any,
+          merchant: merchant || 'Imported Transaction',
+          date: date || new Date().toISOString().split('T')[0],
+          type: (type || 'debit') as any,
+          notes: notes || ''
+        });
+      }
+
+      if (txs.length > 0) {
+        onImport(txs);
+        alert(`Successfully imported ${txs.length} transactions!`);
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        className="hidden" 
+        accept=".csv" 
+        onChange={handleFileChange} 
+      />
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -55,6 +99,22 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
                   <div className="text-left">
                     <span className="text-sm font-bold text-ink block">Export Warehouse</span>
                     <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">CSV / JSON Engine</span>
+                  </div>
+                </div>
+                <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />
+              </button>
+
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-600/5 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                    <FileUp size={22} />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-sm font-bold text-ink block">Bulk Excel Import</span>
+                    <span className="text-[10px] opacity-40 uppercase tracking-widest font-bold">Fast Data Entry</span>
                   </div>
                 </div>
                 <ChevronRight size={18} className="text-ink/20 group-hover:text-purple-600 transition-colors" />

@@ -24,22 +24,30 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-black/5 px-4 pb-10 pt-4 flex justify-around items-center z-50">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md nav-blur border-t border-main p-4 pb-10 pt-2 flex justify-around items-end z-50 h-[88px]">
       {navItems.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "flex flex-col items-center justify-center transition-all duration-300 w-16",
+            "flex flex-col items-center justify-center transition-all duration-300 w-16 mb-1",
             tab.isSpecial 
-              ? "bg-purple-600 h-14 w-14 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white shrink-0 flex items-center justify-center" 
+              ? "bg-purple-600 h-14 w-14 rounded-2xl -mb-2 -translate-y-8 shadow-xl shadow-purple-600/30 border-4 border-white shrink-0 flex items-center justify-center z-10" 
               : "opacity-30 gap-1.5",
-            activeTab === tab.id && !tab.isSpecial && "opacity-100 text-purple-600",
-            activeTab === tab.id && tab.isSpecial && "scale-110 rotate-90"
+            activeTab === tab.id && !tab.isSpecial && "opacity-100 text-purple-600 translate-y-[-2px]",
+            activeTab === tab.id && tab.isSpecial && "scale-105"
           )}
         >
-          <tab.icon size={tab.isSpecial ? 24 : 20} className={tab.isSpecial ? "text-white" : ""} strokeWidth={2.5} />
-          {!tab.isSpecial && <span className="text-[8px] font-black uppercase tracking-[0.2em]">{tab.label}</span>}
+          <tab.icon 
+            size={tab.isSpecial ? 24 : 20} 
+            className={tab.isSpecial ? "text-white" : ""} 
+            strokeWidth={2} 
+          />
+          {!tab.isSpecial && (
+            <span className="text-[9px] font-black uppercase tracking-[0.1em] leading-none">
+              {tab.label}
+            </span>
+          )}
         </button>
       ))}
     </nav>

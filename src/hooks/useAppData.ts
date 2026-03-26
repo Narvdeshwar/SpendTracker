@@ -89,11 +89,31 @@ export const useAppData = (session: Session | null) => {
     fetchData();
   };
 
+  /**
+   * Persists multiple transactions in a single batch for high-efficiency data entry.
+   */
+  const saveTransactionsBulk = async (txs: any[]) => {
+    if (!session?.user?.id) return;
+
+    const newTxs = txs.map(tx => ({
+      ...tx,
+      user_id: session.user.id,
+      id: crypto.randomUUID()
+    }));
+
+    // Optimistic Update
+    setTransactions(prev => [...newTxs, ...prev]);
+
+    await supabase.from('transactions').insert(newTxs);
+    fetchData();
+  };
+
   return {
     transactions,
     accounts,
     isLoading,
     saveTransaction,
+    saveTransactionsBulk,
     saveAccount,
     refresh: fetchData
   };
