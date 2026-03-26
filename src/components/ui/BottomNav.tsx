@@ -30,8 +30,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "flex flex-col items-center gap-1.5 transition-all duration-300 w-16",
-            tab.isSpecial ? "bg-purple-600 p-4 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white shrink-0" : "opacity-30",
+            "flex flex-col items-center justify-center transition-all duration-300 w-16",
+            tab.isSpecial 
+              ? "bg-purple-600 h-14 w-14 rounded-3xl -mt-14 shadow-2xl shadow-purple-600/40 border-4 border-white shrink-0 flex items-center justify-center" 
+              : "opacity-30 gap-1.5",
             activeTab === tab.id && !tab.isSpecial && "opacity-100 text-purple-600",
             activeTab === tab.id && tab.isSpecial && "scale-110 rotate-90"
           )}

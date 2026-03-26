@@ -75,7 +75,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({ onBack, onExport
             </div>
           </div>
 
-          <div className="p-6 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-4xl text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
+          <div className="p-6 bg-linear-to-br from-purple-600 to-indigo-700 rounded-4xl text-white space-y-4 relative overflow-hidden shadow-2xl shadow-purple-600/30">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
