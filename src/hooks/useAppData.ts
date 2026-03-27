@@ -107,7 +107,9 @@ export const useAppData = (session: Session | null) => {
     const currentAcc = accounts.find(a => a.id === tx.account_id);
     if (!currentAcc) return;
 
-    const newBalance = currentAcc.balance - tx.amount;
+    const newBalance = tx.type === 'debit' 
+      ? currentAcc.balance - tx.amount 
+      : currentAcc.balance + tx.amount;
 
     // 1. Immediate UI Updates (Double-Entry)
     setTransactions(prev => [newTx, ...prev]);

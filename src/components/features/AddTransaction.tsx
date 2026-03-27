@@ -27,6 +27,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
   const [category, setCategory] = useState<Category>(editData?.category || initialCategory || 'Dining');
   const [merchant, setMerchant] = useState(editData?.merchant || '');
   const [accountId, setAccountId] = useState(defaultAccountId);
+  const [type, setType] = useState<'debit' | 'credit'>(editData?.type || 'debit');
   
   // New: Pay Mode Toggle logic
   const initialType = accounts.find(a => a.id === defaultAccountId)?.type || 'checking';
@@ -46,7 +47,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       merchant: merchant || 'Unknown Merchant',
       category,
       date: new Date().toISOString().split('T')[0],
-      type: 'debit' as const,
+      type,
       account_id: accountId,
     };
 
@@ -62,20 +63,44 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       </header>
 
       <div className="flex-1 flex flex-col px-8 pt-8 space-y-8 overflow-y-auto no-scrollbar pb-32">
-        {/* Amount Display */}
-        <div className="text-center space-y-2">
-          <p className="meta-label opacity-40">Expense Value</p>
-          <div className="flex items-center justify-center gap-1">
-            <span className="text-3xl font-bold text-ink/30">₹</span>
-            <input 
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              autoFocus
-              className="text-7xl font-bold data-value bg-transparent border-none text-center focus:outline-none w-full tracking-tighter text-primary placeholder:text-primary/10"
-            />
+        {/* Type Toggle + Amount Display */}
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="flex p-1 glass rounded-xl w-48">
+              {(['debit', 'credit'] as const).map(t => (
+                <button 
+                  key={t}
+                  onClick={() => setType(t)}
+                  className={cn(
+                    "flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                    type === t 
+                      ? (t === 'debit' ? "bg-purple-600 text-white shadow-lg" : "bg-emerald-600 text-white shadow-lg") 
+                      : "text-ink/30"
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="meta-label opacity-40">{type === 'debit' ? 'Expense Value' : 'Income Value'}</p>
+            <div className="flex items-center justify-center gap-1">
+              <span className={cn("text-3xl font-bold transition-colors", type === 'debit' ? "text-ink/30" : "text-emerald-600/30")}>₹</span>
+              <input 
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                autoFocus
+                className={cn(
+                  "text-7xl font-bold data-value bg-transparent border-none text-center focus:outline-none w-full tracking-tighter transition-colors",
+                  type === 'debit' ? "text-primary placeholder:text-primary/10" : "text-emerald-600 placeholder:text-emerald-600/10"
+                )}
+              />
+            </div>
           </div>
         </div>
 
