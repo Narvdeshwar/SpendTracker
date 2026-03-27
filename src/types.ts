@@ -1,12 +1,6 @@
 export type Category = 'Dining' | 'Retail' | 'Travel' | 'Home' | 'Groceries' | 'Entertainment' | 'Transport' | 'Other';
 export type Format = 'CSV' | 'JSON';
 
-export interface Friend {
-  id: string;
-  name: string;
-  avatar?: string;
-  user_id: string;
-}
 
 export interface Transaction {
   id: string;
@@ -17,7 +11,6 @@ export interface Transaction {
   merchant: string;
   type: 'debit' | 'credit';
   account_id: string;
-  splits?: { friend_id: string; amount: number }[];
 }
 
 export interface Budget {
@@ -33,7 +26,7 @@ export interface Account {
   institution: string;
   balance: number;
   initialBalance?: number;
-  type: 'checking' | 'savings' | 'investment' | 'crypto';
+  type: 'checking' | 'savings' | 'investment' | 'crypto' | 'cash';
 }
 
 export interface Suggestion {

@@ -14,4 +14,5 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
 export const INITIAL_ACCOUNTS: Account[] = [
   { id: '1', name: 'Primary HDFC', institution: 'HDFC Bank', balance: 145000, initialBalance: 120000, type: 'checking' },
   { id: '2', name: 'Groww Investments', institution: 'Groww', balance: 450000, initialBalance: 380000, type: 'investment' },
+  { id: '3', name: 'Cash Wallet', institution: 'Physical Cash', balance: 5000, initialBalance: 5000, type: 'cash' },
 ];
