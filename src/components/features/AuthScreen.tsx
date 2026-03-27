@@ -57,7 +57,7 @@ export const AuthScreen = () => {
               onClick={() => setIsLogin(true)}
               className={cn(
                 "flex-1 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all",
-                isLogin ? "bg-white text-ink shadow-sm" : "text-ink/40"
+                isLogin ? "bg-surface text-ink shadow-sm" : "text-ink/40"
               )}
             >
               Log In
@@ -66,7 +66,7 @@ export const AuthScreen = () => {
               onClick={() => setIsLogin(false)}
               className={cn(
                 "flex-1 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all",
-                !isLogin ? "bg-white text-ink shadow-sm" : "text-ink/40"
+                !isLogin ? "bg-surface text-ink shadow-sm" : "text-ink/40"
               )}
             >
               Sign Up

@@ -105,7 +105,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
           <div className="grid grid-cols-1 gap-3">
             <button 
               onClick={onExport}
-              className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
+              className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-surface transition-all group border-transparent hover:border-purple-600/20"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-purple-600/5 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
@@ -121,7 +121,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
             <button 
               onClick={() => fileInputRef.current?.click()}
-              className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-white transition-all group border-transparent hover:border-purple-600/20"
+              className="w-full glass p-6 rounded-4xl flex items-center justify-between hover:bg-surface transition-all group border-transparent hover:border-purple-600/20"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-600/5 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
