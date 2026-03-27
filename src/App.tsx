@@ -182,9 +182,9 @@ export default function App() {
           {(showUser || showExport) && (
             <motion.div 
               key="modal-user-export" 
-              initial={{ x: '100%' }} 
+              initial={{ x: '-100%' }} 
               animate={{ x: 0 }} 
-              exit={{ x: '100%' }} 
+              exit={{ x: '-100%' }} 
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="fixed inset-0 z-50 bg-bg overflow-hidden"
             >
