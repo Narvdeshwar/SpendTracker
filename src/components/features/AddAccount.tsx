@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Banknote, Landmark, BarChart2, Bitcoin, Link2 } from 'lucide-react';
+import { ChevronLeft, Banknote, Landmark, BarChart2, Bitcoin, Link2, Coins } from 'lucide-react';
 import { Account } from '../../types';
 import { cn } from '../../utils/cn';
 
@@ -85,6 +85,7 @@ export const AddAccount: React.FC<AddAccountProps> = ({ onBack, onSave }) => {
                   { type: 'savings', icon: Landmark, label: 'Savings' },
                   { type: 'investment', icon: BarChart2, label: 'Investment' },
                   { type: 'crypto', icon: Bitcoin, label: 'Crypto' },
+                  { type: 'cash', icon: Coins, label: 'Cash' },
                 ] as const).map(({ type, icon: Icon, label }) => (
                   <button
                     key={type}
@@ -94,13 +95,14 @@ export const AddAccount: React.FC<AddAccountProps> = ({ onBack, onSave }) => {
                       formData.type === type ? "bg-purple-600 text-white border-purple-600 shadow-xl shadow-purple-600/20" : "glass border-transparent opacity-40"
                     )}
                   >
-                    <Icon size={22} />
+                    <Icon size={18} />
                     <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
+
 
           <button 
             onClick={handleSave}
