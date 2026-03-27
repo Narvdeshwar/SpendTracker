@@ -49,13 +49,12 @@ export default function App() {
     setActiveQuickCat,
     transactions,
     accounts,
-    friends,
     handleSaveTransaction,
     handleSaveAccount,
     handleSaveBulk,
     handleQuickAdd,
-    addFriend,
     deleteTransaction,
+
     handleEditTransaction,
     updateProfile,
     selectedTxForEdit,
@@ -154,14 +153,13 @@ export default function App() {
                 editData={selectedTxForEdit}
                 initialCategory={activeQuickCat}
                 accounts={accounts}
-                friends={friends}
-                onAddFriend={addFriend}
                 onBack={() => {
                   setShowAdd(false);
                   setActiveQuickCat(null);
                 }} 
                 onSave={handleSaveTransaction}
               />
+
             </motion.div>
           )}
 
