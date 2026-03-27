@@ -4,8 +4,8 @@ import { ProCard } from '../../components/ui/ProCard';
 
 // Sub-components - Modularity via feature breakdown
 import { DashboardHeader } from './DashboardHeader';
-import { NetWorthSection } from './NetWorthSection';
 import { SpendingStats } from './SpendingStats';
+
 import { CategoryDistribution } from './CategoryDistribution';
 import { SmartSuggestions } from './SmartSuggestions';
 
@@ -44,8 +44,6 @@ const Dashboard: React.FC<DashboardProps> = ({
     <div className="space-y-8 pb-32">
       <DashboardHeader onOpenUser={onOpenUser} />
       
-      <NetWorthSection netWorth={netWorth} />
-
       <SpendingStats 
         monthSpending={monthSpending}
         budgetTotal={budgetTotal}
@@ -53,6 +51,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         dailyAverage={dailyAverage}
         transactionCount={transactions.length}
       />
+
 
       <CategoryDistribution categoryMix={categoryMix} />
 
