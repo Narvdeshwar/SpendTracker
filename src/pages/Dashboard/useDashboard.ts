@@ -30,9 +30,12 @@ export const useDashboard = (transactions: Transaction[], accounts: Account[]) =
     .filter(t => t.type === 'debit' && t.date.startsWith(currentMonth))
     .reduce((sum, t) => sum + t.amount, 0), [transactions, currentMonth]);
 
-  const budgetTotal = 5000;
-  const budgetRemaining = useMemo(() => budgetTotal - monthSpending, [monthSpending]);
-  const dailyAverage = useMemo(() => monthSpending / todayDay, [monthSpending, todayDay]);
+  /**
+   * Analytics based on real data.
+   */
+  const budgetTotal = 25000; // This could be synced from a 'settings' table in the future
+  const budgetRemaining = Math.max(0, budgetTotal - monthSpending);
+  const dailyAverage = todayDay > 0 ? monthSpending / todayDay : 0;
 
   /**
    * Generates a breakdown of categorical spending for the distribution chart.
@@ -50,13 +53,43 @@ export const useDashboard = (transactions: Transaction[], accounts: Account[]) =
   }, [transactions]);
 
   /**
-   * Placeholder suggestions for financial health.
-   * Can be replaced by real LLM-powered insights in the future.
+   * Dynamic suggestions based on actual spending data.
    */
-  const suggestions: Suggestion[] = [
-    { id: '1', title: 'Smart Saving', description: "You've spent ₹2,400 less on Dining than average. Invest this into your Vanguard!", type: 'saving' },
-    { id: '2', title: 'Budget Alert', description: "Heads up: You're at 85% of your 'Retail' budget for March.", type: 'alert' }
-  ];
+  const suggestions: Suggestion[] = useMemo(() => {
+    const list: Suggestion[] = [];
+    
+    // Check if daily average is high
+    if (dailyAverage > 1000) {
+      list.push({ 
+        id: 'burn-rate', 
+        title: 'High Burn Rate', 
+        description: `You're averaging ₹${Math.round(dailyAverage)}/day this month. Try to keep it under ₹800.`, 
+        type: 'alert' 
+      });
+    } else {
+      list.push({ 
+        id: 'saving-pro', 
+        title: 'Efficiency Pro', 
+        description: `Great job! Your daily spend is ₹${Math.round(dailyAverage)}, which is well within safe limits.`, 
+        type: 'saving' 
+      });
+    }
+
+    // Category insight
+    const topCat = categoryMix[0];
+    if (topCat && topCat.value > monthSpending * 0.4) {
+      list.push({
+        id: 'cat-weight',
+        title: 'Category Concentration',
+        description: `${topCat.name} accounts for ${Math.round((topCat.value / monthSpending) * 100)}% of your monthly spend.`,
+        type: 'insight'
+      });
+    }
+
+    return list.length > 0 ? list : [
+      { id: '1', title: 'Data Initialized', description: 'Your real-time analytics are now live and tracking your behavior.', type: 'saving' }
+    ];
+  }, [dailyAverage, categoryMix, monthSpending]);
 
   return {
     netWorth,
