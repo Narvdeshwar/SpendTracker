@@ -7,27 +7,30 @@ SpendTracker is an ultra-modern, high-performance personal finance dashboard des
 
 ## 💎 Premium Features
 
-- **Apple Glassmorphism UI**: High-blur surfaces, saturated backdrops, and ultra-thin borders for a state-of-the-art visual experience.
-- **Smart Net Worth Engine**: Dynamic calculation of real-time liquid assets minus daily liabilities.
-- **Categorical Budgeting**: Visual progress rings and color-coded stress bars for intuitive limit management.
+- **Apple Glassmorphism UI**: High-blur surfaces, saturated backdrops, and ultra-thin borders for a state-of-the-art visual experience with zero-latency 60fps animations.
+- **Smart Cash & Online Mode**: A dedicated **Pay Mode Selector** that toggles between Cash Wallets and Online Bank Accounts, ensuring your physical and digital wealth are tracked with equal precision.
+- **Behavioral Analytics Engine**: Real-time spending intelligence that calculates **Burn Rates**, **Daily Averages**, and **Category Concentration** to proactively alert you of unusual behavior.
+- **Persistent Account Memory**: Intelligent UI that remembers your last used payment source, reducing the number of taps required to log your daily expenses.
+- **Universal Dark Mode**: Comprehensive theme stability with optimized contrast for crystal-clear financial monitoring in all lighting conditions.
 - **Global Quick-Add**: A persistent, floating drawer that lets you log transactions in under 2 seconds.
-- **Advanced Export System**: Multi-format data extraction (CSV/JSON) with live table previews.
-- **AI-Ready Architecture**: Built-in hooks for Gemini-powered financial insights and proactive spending alerts.
+- **Advanced Export & Sync**: Multi-format data extraction (CSV/JSON) with live table previews and real-time **Supabase** backend synchronization.
 
 ## 🚀 Tech Stack
 
-- **React 19 & Vite**: Lightning-fast frontend architecture.
-- **TypeScript**: Type-safe financial logic for maximum reliability.
-- **Framer Motion**: Smooth, cinematic UI transitions and micro-interactions.
-- **Lucide Icons**: Crisp, professional iconography.
-- **Recharts**: High-fidelity SVG data visualization.
-- **Capacitor**: Ready for deployment as a native Android/iOS mobile application.
+- **React 19 & Vite**: Lightning-fast frontend architecture with optimal cold-start performance.
+- **Supabase**: Real-time database and secure authentication layer for seamless persistent storage.
+- **TypeScript**: Type-safe financial logic for maximum reliability during high-frequency tracking.
+- **Framer Motion**: Smooth, cinematic UI transitions and micro-interactions optimized for mobile GPUs.
+- **Lucide Icons**: Crisp, professional iconography including specialized assets for Cash and Banking.
+- **Recharts**: High-fidelity SVG data visualization for clear categorical distribution.
+- **Capacitor**: Enterprise-grade deployment for native Android/iOS mobile application experience.
 
 ## 💻 Getting Started
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (Latest LTS)
 - NPM or PNPM
+- [Supabase Account](https://supabase.com/) (For persistent data)
 
 ### Installation
 
@@ -43,7 +46,11 @@ SpendTracker is an ultra-modern, high-performance personal finance dashboard des
    ```
 
 3. **Configure Environment**
-   Set your `GEMINI_API_KEY` in `.env` for AI insight features (optional).
+   Create a `.env.local` file and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
 4. **Launch Dev Server**
    ```bash

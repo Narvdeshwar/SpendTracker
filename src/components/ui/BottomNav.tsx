@@ -44,7 +44,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
             strokeWidth={2} 
           />
           {!tab.isSpecial && (
-            <span className="text-[9px] font-black uppercase tracking-[0.1em] leading-none">
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">
               {tab.label}
             </span>
           )}
