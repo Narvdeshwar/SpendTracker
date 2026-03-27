@@ -39,16 +39,15 @@ export const useApp = () => {
 
   const { 
     transactions, 
-    accounts, 
-    friends,
+    accounts,
     isLoading, 
     saveTransaction, 
     saveTransactionsBulk,
     saveAccount,
-    addFriend,
     deleteTransaction,
     updateTransaction,
     updateProfile
+
   } = useAppData(session);
 
   const [selectedTxForEdit, setSelectedTxForEdit] = useState<any>(null);
@@ -82,6 +81,8 @@ export const useApp = () => {
       await updateTransaction({ ...tx, id: selectedTxForEdit.id });
     } else {
       await saveTransaction(tx);
+      // Remember last payment source for next entry
+      localStorage.setItem('pnt_last_account', tx.account_id);
     }
     setShowAdd(false);
     setSelectedTxForEdit(null);
@@ -130,19 +131,18 @@ export const useApp = () => {
     setActiveQuickCat,
     transactions,
     accounts,
-    friends,
     isLoading,
     handleTabChange,
     handleSaveTransaction,
     handleSaveAccount,
     handleSaveBulk,
     handleQuickAdd,
-    addFriend,
     deleteTransaction,
     handleEditTransaction,
     updateProfile,
     selectedTxForEdit,
     categories
+
   };
 };
 
